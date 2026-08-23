@@ -99,5 +99,5 @@ uv pip install --python .pptx-venv/bin/python python-pptx
 
 ---
 
-**整理人**：elan
+**整理人**：Kenny Kang
 **整理日期**：2026/01
