@@ -1122,8 +1122,15 @@ pluginSuggestionMarketplaces: 允許內容相關建議""",
         align=PP_ALIGN.CENTER
     )
 
-    # 連接箭頭
-    h.add_arrow(slide, Inches(9.3), Inches(3.5), Inches(10.0), Inches(3.5), color=RGBColor(0x0E, 0x7C, 0x66), width=2)
+    # 連接箭頭（Plugin → Marketplace）使用箭頭形狀
+    arrow1 = slide.shapes.add_shape(
+        MSO_SHAPE.RIGHT_ARROW,
+        Inches(9.3), Inches(3.35),
+        Inches(0.7), Inches(0.3)
+    )
+    arrow1.fill.solid()
+    arrow1.fill.fore_color.rgb = RGBColor(0x0E, 0x7C, 0x66)
+    arrow1.line.fill.background()
 
     # CLAUDE.md 在左邊
     claude_x = Inches(0.5)
@@ -1146,8 +1153,15 @@ pluginSuggestionMarketplaces: 允許內容相關建議""",
         align=PP_ALIGN.CENTER
     )
 
-    # 連接箭頭（CLAUDE.md → Plugin）
-    h.add_arrow(slide, Inches(3.5), Inches(3.5), Inches(4.0), Inches(3.5), color=h.COLOR_DARK, width=2)
+    # 連接箭頭（CLAUDE.md → Plugin）使用箭頭形狀
+    arrow2 = slide.shapes.add_shape(
+        MSO_SHAPE.RIGHT_ARROW,
+        Inches(3.5), Inches(3.35),
+        Inches(0.5), Inches(0.3)
+    )
+    arrow2.fill.solid()
+    arrow2.fill.fore_color.rgb = h.COLOR_DARK
+    arrow2.line.fill.background()
 
     h.add_callout(
         slide, "完整 Plugin 範例：typeform-feedback 插件（整合 Form、Slack、GitHub Issue）",

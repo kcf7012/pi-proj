@@ -215,8 +215,8 @@ def build():
 
     h.add_text_block(
         slide, "範例：阻擋 rm -rf 命令",
-        Inches(0.5), Inches(1.7), Inches(12.333), Inches(0.4),
-        font_size=16, bold=True, color=h.COLOR_RED,
+        Inches(0.5), Inches(1.45), Inches(12.333), Inches(0.4),
+        font_size=15, bold=True, color=h.COLOR_RED,
         align=PP_ALIGN.CENTER
     )
 
@@ -229,22 +229,22 @@ def build():
         ("5", "Claude Code 阻擋工具", "向 Claude 顯示原因", h.COLOR_DARK),
     ]
 
-    step_h = Inches(0.8)
-    step_gap = Inches(0.2)
+    step_h = Inches(0.7)
+    step_gap = Inches(0.15)
     total_h = step_h * len(steps) + step_gap * (len(steps) - 1)
-    start_y = Inches(2.3)
+    start_y = Inches(1.95)
 
     for i, (num, title, desc, color) in enumerate(steps):
         y = start_y + i * (step_h + step_gap)
 
         # 編號圓
-        circle = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(0.5), y + Inches(0.15), Inches(0.5), Inches(0.5))
+        circle = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(0.5), y + Inches(0.1), Inches(0.5), Inches(0.5))
         circle.fill.solid()
         circle.fill.fore_color.rgb = color
         circle.line.fill.background()
         h.add_text_block(
             slide, num,
-            Inches(0.5), y + Inches(0.15), Inches(0.5), Inches(0.5),
+            Inches(0.5), y + Inches(0.1), Inches(0.5), Inches(0.5),
             font_size=18, bold=True, color=h.COLOR_WHITE, align=PP_ALIGN.CENTER
         )
 
@@ -257,18 +257,18 @@ def build():
 
         h.add_text_block(
             slide, title,
-            Inches(1.4), y + Inches(0.1), Inches(6.6), Inches(0.4),
-            font_size=14, bold=True, color=color
+            Inches(1.4), y + Inches(0.05), Inches(6.6), Inches(0.35),
+            font_size=13, bold=True, color=color
         )
         h.add_text_block(
             slide, desc,
-            Inches(1.4), y + Inches(0.45), Inches(6.6), Inches(0.3),
+            Inches(1.4), y + Inches(0.38), Inches(6.6), Inches(0.3),
             font_size=10, color=h.COLOR_GRAY_TXT
         )
 
         # 連接線（除了最後一個）
         if i < len(steps) - 1:
-            line = slide.shapes.add_shape(MSO_SHAPE.DOWN_ARROW, Inches(0.6), y + Inches(0.7), Inches(0.3), step_gap + Inches(0.05))
+            line = slide.shapes.add_shape(MSO_SHAPE.DOWN_ARROW, Inches(0.6), y + Inches(0.6), Inches(0.3), step_gap + Inches(0.05))
             line.fill.solid()
             line.fill.fore_color.rgb = h.COLOR_GRAY_TXT
             line.line.fill.background()
@@ -282,13 +282,13 @@ def build():
     "permissionDecisionReason": "Destructive command blocked"
   }
 }""",
-        Inches(8.5), Inches(2.3), Inches(4.5), Inches(2.0),
+        Inches(8.5), Inches(1.95), Inches(4.5), Inches(1.8),
         font_size=10
     )
 
     h.add_text_block(
         slide, "JSON 決策輸出",
-        Inches(8.5), Inches(4.4), Inches(4.5), Inches(0.3),
+        Inches(8.5), Inches(3.85), Inches(4.5), Inches(0.3),
         font_size=12, bold=True, color=h.COLOR_PRIMARY,
         align=PP_ALIGN.CENTER
     )
@@ -387,8 +387,8 @@ def build():
 
     h.add_text_block(
         slide, "🎯 三種匹配方式",
-        Inches(0.5), Inches(1.7), Inches(12.333), Inches(0.4),
-        font_size=18, bold=True, color=h.COLOR_PRIMARY,
+        Inches(0.5), Inches(1.45), Inches(12.333), Inches(0.4),
+        font_size=17, bold=True, color=h.COLOR_PRIMARY,
         align=PP_ALIGN.CENTER
     )
 
@@ -402,7 +402,7 @@ def build():
             ["mcp__.*", "JavaScript regex", "所有 MCP 工具"],
             ["^Edit$", "錨定 regex", "只匹配 Edit（不匹配 NotebookEdit）"],
         ],
-        Inches(0.5), Inches(2.3), Inches(12.333), Inches(3.0),
+        Inches(0.5), Inches(1.95), Inches(12.333), Inches(2.5),
         font_size=12
     )
 
@@ -424,7 +424,7 @@ def build():
             "StopFailure: rate_limit|overloaded",
             "ConfigChange: user|project",
         ],
-        top=Inches(5.5), height=Inches(1.5)
+        top=Inches(4.6), height=Inches(2.2)
     )
 
     # ============================================================
@@ -598,13 +598,13 @@ def build():
     ]
   }
 }""",
-        Inches(0.5), Inches(1.7), Inches(7), Inches(3.0),
-        font_size=12
+        Inches(0.5), Inches(1.5), Inches(7), Inches(3.4),
+        font_size=11
     )
 
     h.add_text_block(
         slide, "🔧 Exec form vs Shell form",
-        Inches(7.833), Inches(1.7), Inches(5), Inches(0.4),
+        Inches(7.833), Inches(1.5), Inches(5), Inches(0.4),
         font_size=14, bold=True, color=h.COLOR_BLUE
     )
 
@@ -621,25 +621,25 @@ def build():
   "type": "command",
   "command": "node \"${CLAUDE_PLUGIN_ROOT}\"/script.js"
 }""",
-        Inches(7.833), Inches(2.1), Inches(5), Inches(2.6),
+        Inches(7.833), Inches(1.9), Inches(5), Inches(2.9),
         font_size=10
     )
 
     h.add_text_block(
         slide, "⚠️ 引用路徑佔位符時用 exec form",
-        Inches(0.5), Inches(4.9), Inches(12.333), Inches(0.4),
+        Inches(0.5), Inches(5.0), Inches(12.333), Inches(0.4),
         font_size=12, color=h.COLOR_BLUE, bold=True
     )
 
     h.add_text_block(
         slide, "Windows 上的 .cmd/.bat shim 不是可執行檔 → 用 exec form 必須透過 node 呼叫腳本",
-        Inches(0.5), Inches(5.5), Inches(12.333), Inches(0.4),
+        Inches(0.5), Inches(5.4), Inches(12.333), Inches(0.4),
         font_size=11, color=h.COLOR_GRAY_TXT
     )
 
     h.add_callout(
         slide, "Plugin 用 ${user_config.*} 必須用 exec form（shell form 會被拒絕）",
-        Inches(0.5), Inches(6.1), Inches(12.333), Inches(0.4),
+        Inches(0.5), Inches(5.9), Inches(12.333), Inches(0.5),
         icon="🔒", font_size=12
     )
 
@@ -814,7 +814,7 @@ def build():
             ["2", "阻塞錯誤", "stderr 作為原因，阻擋該動作（多數事件）"],
             ["其他", "取決於 stdout", "純文字 → 非阻塞錯誤；JSON → 套用 JSON 決策"],
         ],
-        Inches(0.5), Inches(1.7), Inches(12.333), Inches(2.0),
+        Inches(0.5), Inches(1.5), Inches(12.333), Inches(2.0),
         font_size=12
     )
 
@@ -830,19 +830,19 @@ if [[ "$command" == rm* ]]; then
 fi
 
 exit 0  # 允許""",
-        Inches(0.5), Inches(4.0), Inches(12.333), Inches(2.0),
-        font_size=11
+        Inches(0.5), Inches(3.7), Inches(12.333), Inches(2.5),
+        font_size=10
     )
 
     h.add_callout(
         slide, "exit 2 對大多數事件阻擋，但 PermissionRequest、PostToolUse 等不阻擋",
-        Inches(0.5), Inches(6.2), Inches(12.333), Inches(0.4),
+        Inches(0.5), Inches(6.3), Inches(12.333), Inches(0.4),
         icon="⚠️", font_size=12
     )
 
     h.add_text_block(
         slide, "WorktreeCreate 例外：任何非零退出碼都會失敗",
-        Inches(0.5), Inches(6.7), Inches(12.333), Inches(0.4),
+        Inches(0.5), Inches(6.8), Inches(12.333), Inches(0.4),
         font_size=11, color=h.COLOR_RED, italic=True
     )
 
@@ -859,8 +859,8 @@ exit 0  # 允許""",
 
     h.add_text_block(
         slide, "🎯 退出 0 + JSON = 結構化控制",
-        Inches(0.5), Inches(1.7), Inches(12.333), Inches(0.4),
-        font_size=18, bold=True, color=h.COLOR_PRIMARY,
+        Inches(0.5), Inches(1.5), Inches(12.333), Inches(0.4),
+        font_size=17, bold=True, color=h.COLOR_PRIMARY,
         align=PP_ALIGN.CENTER
     )
 
@@ -879,13 +879,13 @@ exit 0  # 允許""",
     "additionalContext": "Current environment: production. Proceed with caution."
   }
 }""",
-        Inches(0.5), Inches(2.3), Inches(12.333), Inches(2.5),
-        font_size=11
+        Inches(0.5), Inches(2.0), Inches(12.333), Inches(2.8),
+        font_size=10
     )
 
     h.add_text_block(
         slide, "通用欄位 vs 事件特定欄位",
-        Inches(0.5), Inches(5.0), Inches(12.333), Inches(0.4),
+        Inches(0.5), Inches(4.95), Inches(12.333), Inches(0.4),
         font_size=14, bold=True, color=h.COLOR_PRIMARY
     )
 
@@ -905,7 +905,7 @@ exit 0  # 允許""",
             "Stop: decision + reason",
             "UserPromptSubmit: additionalContext",
         ],
-        top=Inches(5.4), height=Inches(1.6)
+        top=Inches(5.35), height=Inches(1.7)
     )
 
     # ============================================================
@@ -921,8 +921,8 @@ exit 0  # 允許""",
 
     h.add_text_block(
         slide, "🎯 PreToolUse 多個 hook 衝突時",
-        Inches(0.5), Inches(1.7), Inches(12.333), Inches(0.4),
-        font_size=18, bold=True, color=h.COLOR_RED,
+        Inches(0.5), Inches(1.45), Inches(12.333), Inches(0.4),
+        font_size=17, bold=True, color=h.COLOR_RED,
         align=PP_ALIGN.CENTER
     )
 
@@ -935,11 +935,11 @@ exit 0  # 允許""",
     ]
 
     box_w = Inches(2.8)
-    box_h = Inches(2.0)
+    box_h = Inches(1.7)
     h_gap = Inches(0.2)
     total_w = box_w * 4 + h_gap * 3
     start_x = (h.SLIDE_W - total_w) / 2
-    start_y = Inches(2.3)
+    start_y = Inches(2.0)
 
     for i, (name, rank, action, color) in enumerate(levels):
         x = start_x + i * (box_w + h_gap)
@@ -952,18 +952,18 @@ exit 0  # 允許""",
 
         h.add_text_block(
             slide, name,
-            x, start_y + Inches(0.3), box_w, Inches(0.5),
-            font_size=24, bold=True, color=color, align=PP_ALIGN.CENTER, font="Consolas"
+            x, start_y + Inches(0.2), box_w, Inches(0.5),
+            font_size=22, bold=True, color=color, align=PP_ALIGN.CENTER, font="Consolas"
         )
         h.add_text_block(
             slide, rank,
-            x, start_y + Inches(0.9), box_w, Inches(0.4),
-            font_size=12, color=h.COLOR_GRAY_TXT, italic=True, align=PP_ALIGN.CENTER
+            x, start_y + Inches(0.75), box_w, Inches(0.4),
+            font_size=11, color=h.COLOR_GRAY_TXT, italic=True, align=PP_ALIGN.CENTER
         )
         h.add_text_block(
             slide, action,
-            x, start_y + Inches(1.4), box_w, Inches(0.4),
-            font_size=14, bold=True, color=h.COLOR_DARK, align=PP_ALIGN.CENTER
+            x, start_y + Inches(1.2), box_w, Inches(0.4),
+            font_size=13, bold=True, color=h.COLOR_DARK, align=PP_ALIGN.CENTER
         )
 
         if i < len(levels) - 1:
@@ -974,7 +974,7 @@ exit 0  # 允許""",
 
     h.add_text_block(
         slide, "📌 其他事件（如 Stop）用 top-level decision + reason",
-        Inches(0.5), Inches(4.8), Inches(12.333), Inches(0.4),
+        Inches(0.5), Inches(4.0), Inches(12.333), Inches(0.4),
         font_size=13, color=h.COLOR_DARK, align=PP_ALIGN.CENTER
     )
 
@@ -983,7 +983,7 @@ exit 0  # 允許""",
   "decision": "block",
   "reason": "Tests must pass before stopping"
 }""",
-        Inches(2.0), Inches(5.4), Inches(9.333), Inches(1.3),
+        Inches(2.0), Inches(4.6), Inches(9.333), Inches(1.5),
         font_size=12
     )
 
@@ -1085,13 +1085,13 @@ exit 0  # 允許""",
     ]
   }
 }""",
-        Inches(0.5), Inches(1.7), Inches(7), Inches(2.5),
-        font_size=11
+        Inches(0.5), Inches(1.5), Inches(7), Inches(2.8),
+        font_size=10
     )
 
     h.add_text_block(
         slide, "📊 進階：替換工具輸出",
-        Inches(7.833), Inches(1.7), Inches(5), Inches(0.4),
+        Inches(7.833), Inches(1.5), Inches(5), Inches(0.4),
         font_size=14, bold=True, color=h.COLOR_PRIMARY
     )
 
@@ -1109,19 +1109,19 @@ exit 0  # 允許""",
 }
 
 // updatedToolOutput 必須匹配工具輸出形狀""",
-        Inches(7.833), Inches(2.1), Inches(5), Inches(2.5),
+        Inches(7.833), Inches(1.9), Inches(5), Inches(2.6),
         font_size=9
     )
 
     h.add_callout(
         slide, "⚠️ updatedToolOutput 只改 Claude 看到的內容；工具實際執行結果不變",
-        Inches(0.5), Inches(4.6), Inches(12.333), Inches(0.4),
+        Inches(0.5), Inches(4.4), Inches(12.333), Inches(0.4),
         icon="⚠️", font_size=12
     )
 
     h.add_text_block(
         slide, "📋 寬鬆匹配技巧",
-        Inches(0.5), Inches(5.2), Inches(12.333), Inches(0.4),
+        Inches(0.5), Inches(4.95), Inches(12.333), Inches(0.4),
         font_size=14, bold=True, color=h.COLOR_PRIMARY
     )
 
@@ -1131,7 +1131,7 @@ exit 0  # 允許""",
             "若想特定檔案變更時觸發 → 用 FileChanged 事件",
             "FileChanged 無決策控制，但有 watchPaths 動態管理",
         ],
-        Inches(0.5), Inches(5.6), Inches(12), Inches(1.2),
+        Inches(0.5), Inches(5.35), Inches(12), Inches(1.4),
         font_size=11
     )
 
@@ -1164,13 +1164,13 @@ exit 0  # 允許""",
 
 // 當 ok: false → reason 給 Claude 繼續
 // 當 ok: true 或 ok: false + impossible: true → 允許停止""",
-        Inches(0.5), Inches(1.7), Inches(12.333), Inches(2.5),
-        font_size=11
+        Inches(0.5), Inches(1.5), Inches(12.333), Inches(2.9),
+        font_size=10
     )
 
     h.add_text_block(
         slide, "⚠️ Stop hook 連續 8 次阻擋會被覆寫",
-        Inches(0.5), Inches(4.4), Inches(12.333), Inches(0.4),
+        Inches(0.5), Inches(4.55), Inches(12.333), Inches(0.4),
         font_size=14, bold=True, color=h.COLOR_RED
     )
 
@@ -1182,13 +1182,13 @@ if [ "$(echo "$input" | jq -r '.stop_hook_active')" = "true" ]; then
   exit 0  # 已被觸發過，允許停止
 fi
 # ... 你的檢查邏輯""",
-        Inches(0.5), Inches(4.8), Inches(12.333), Inches(1.5),
+        Inches(0.5), Inches(5.0), Inches(12.333), Inches(1.7),
         font_size=10
     )
 
     h.add_callout(
         slide, "/goal 是 session-scoped Stop hook 的內建快捷方式",
-        Inches(0.5), Inches(6.5), Inches(12.333), Inches(0.4),
+        Inches(0.5), Inches(6.8), Inches(12.333), Inches(0.4),
         icon="🎯", font_size=12
     )
 
@@ -1220,13 +1220,13 @@ fi
     ]
   }
 }""",
-        Inches(0.5), Inches(1.7), Inches(7), Inches(2.5),
-        font_size=11
+        Inches(0.5), Inches(1.5), Inches(7), Inches(2.6),
+        font_size=9
     )
 
     h.add_text_block(
         slide, "SessionStart matchers",
-        Inches(7.833), Inches(1.7), Inches(5), Inches(0.4),
+        Inches(7.833), Inches(1.5), Inches(5), Inches(0.4),
         font_size=13, bold=True, color=h.COLOR_BLUE
     )
 
@@ -1238,13 +1238,13 @@ fi
             "compact — auto/manual compaction",
             "fork — 從現有 session 分叉",
         ],
-        Inches(7.833), Inches(2.1), Inches(5), Inches(2.5),
+        Inches(7.833), Inches(1.9), Inches(5), Inches(2.2),
         font_size=11
     )
 
     h.add_text_block(
         slide, "💡 SessionStart hooks 在每個 session 都執行 → 保持快速",
-        Inches(0.5), Inches(4.4), Inches(12.333), Inches(0.4),
+        Inches(0.5), Inches(4.25), Inches(12.333), Inches(0.4),
         font_size=12, color=h.COLOR_BLUE, bold=True
     )
 
@@ -1255,13 +1255,13 @@ if [ -n "$CLAUDE_ENV_FILE" ]; then
   echo 'export NODE_ENV=production' >> "$CLAUDE_ENV_FILE"
   echo 'export PATH="$PATH:./node_modules/.bin"' >> "$CLAUDE_ENV_FILE"
 fi""",
-        Inches(0.5), Inches(4.9), Inches(12.333), Inches(1.5),
-        font_size=10
+        Inches(0.5), Inches(4.7), Inches(12.333), Inches(1.7),
+        font_size=9
     )
 
     h.add_text_block(
         slide, "SessionEnd：清理任務、記錄 session 統計、儲存狀態",
-        Inches(0.5), Inches(6.6), Inches(12.333), Inches(0.4),
+        Inches(0.5), Inches(6.5), Inches(12.333), Inches(0.4),
         font_size=12, color=h.COLOR_DARK
     )
 
@@ -1292,13 +1292,13 @@ fi""",
     ]
   }
 }""",
-        Inches(0.5), Inches(1.7), Inches(7), Inches(2.0),
-        font_size=11
+        Inches(0.5), Inches(1.4), Inches(7), Inches(2.5),
+        font_size=9
     )
 
     h.add_text_block(
         slide, "跨平台桌面通知",
-        Inches(7.833), Inches(1.7), Inches(5), Inches(0.4),
+        Inches(7.833), Inches(1.4), Inches(5), Inches(0.4),
         font_size=13, bold=True, color=h.COLOR_BLUE
     )
 
@@ -1308,7 +1308,7 @@ fi""",
             "Linux: notify-send",
             "Windows: powershell MessageBox",
         ],
-        Inches(7.833), Inches(2.1), Inches(5), Inches(1.5),
+        Inches(7.833), Inches(1.8), Inches(5), Inches(1.6),
         font_size=11
     )
 
@@ -1362,8 +1362,8 @@ fi""",
     ]
   }
 }""",
-        Inches(0.5), Inches(1.7), Inches(12.333), Inches(2.0),
-        font_size=11
+        Inches(0.5), Inches(1.4), Inches(12.333), Inches(2.7),
+        font_size=9
     )
 
     h.add_two_column_compare(
@@ -1384,12 +1384,12 @@ fi""",
             "被立刻讀取結果",
             "（下次 session 才知道）",
         ],
-        top=Inches(4.0), height=Inches(2.5)
+        top=Inches(4.2), height=Inches(2.2)
     )
 
     h.add_callout(
         slide, "async 結果在下個 session 開始時可見（--continue 時讀取）",
-        Inches(0.5), Inches(6.6), Inches(12.333), Inches(0.4),
+        Inches(0.5), Inches(6.5), Inches(12.333), Inches(0.4),
         icon="⏱", font_size=12
     )
 
@@ -1654,13 +1654,13 @@ tail -f /tmp/claude.log""",
     ]
   }
 }""",
-        Inches(0.5), Inches(1.7), Inches(7), Inches(2.0),
-        font_size=11
+        Inches(0.5), Inches(1.5), Inches(7), Inches(2.5),
+        font_size=9
     )
 
     h.add_text_block(
         slide, "💡 PowerShell 注意事項",
-        Inches(7.833), Inches(1.7), Inches(5), Inches(0.4),
+        Inches(7.833), Inches(1.5), Inches(5), Inches(0.4),
         font_size=14, bold=True, color=h.COLOR_BLUE
     )
 
@@ -1672,7 +1672,7 @@ tail -f /tmp/claude.log""",
             "Claude Code 自動重寫為 ${env:NAME}",
             "Windows .cmd/.bat shim 必須 shell form",
         ],
-        Inches(7.833), Inches(2.1), Inches(5), Inches(2.0),
+        Inches(7.833), Inches(1.9), Inches(5), Inches(2.0),
         font_size=11
     )
 
@@ -1683,13 +1683,13 @@ tail -f /tmp/claude.log""",
   "shell": "powershell",
   "command": "& \"$env:CLAUDE_PROJECT_DIR\\.claude\\hooks\\check.ps1\""
 }""",
-        Inches(0.5), Inches(4.0), Inches(12.333), Inches(1.5),
-        font_size=11
+        Inches(0.5), Inches(4.2), Inches(12.333), Inches(1.7),
+        font_size=10
     )
 
     h.add_callout(
         slide, "跨平台 plugin 建議：用 exec form 搭配 node 處理差異",
-        Inches(0.5), Inches(5.7), Inches(12.333), Inches(0.4),
+        Inches(0.5), Inches(6.1), Inches(12.333), Inches(0.4),
         icon="🌐", font_size=12
     )
 
@@ -1778,34 +1778,34 @@ tail -f /tmp/claude.log""",
     ]
 
     for i, (label, color, code) in enumerate(patterns):
-        y = Inches(1.7) + i * Inches(1.0)
+        y = Inches(1.5) + i * Inches(0.95)
 
         # 標題列
-        title_box = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.5), y, Inches(3.5), Inches(0.85))
+        title_box = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.5), y, Inches(3.5), Inches(0.8))
         title_box.fill.solid()
         title_box.fill.fore_color.rgb = color
         title_box.line.fill.background()
         h.add_text_block(
             slide, label,
-            Inches(0.5), y, Inches(3.5), Inches(0.85),
+            Inches(0.5), y, Inches(3.5), Inches(0.8),
             font_size=12, bold=True, color=h.COLOR_WHITE,
             align=PP_ALIGN.CENTER
         )
 
         # 程式碼
-        code_box = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(4.0), y, Inches(8.833), Inches(0.85))
+        code_box = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(4.0), y, Inches(8.833), Inches(0.8))
         code_box.fill.solid()
         code_box.fill.fore_color.rgb = h.COLOR_CODE_BG
         code_box.line.fill.background()
         h.add_text_block(
-            slide, code.replace("\n", " · ")[:100] + "...",
-            Inches(4.1), y, Inches(8.7), Inches(0.85),
-            font_size=8, color=h.COLOR_CODE_FG, font="Consolas"
+            slide, code.replace("\n", " · ")[:130] + "...",
+            Inches(4.1), y, Inches(8.7), Inches(0.8),
+            font_size=10, color=h.COLOR_CODE_FG, font="Consolas"
         )
 
     h.add_callout(
         slide, "完整可運行的 hook 範例見 06-hooks.md § 背景執行",
-        Inches(0.5), Inches(6.7), Inches(12.333), Inches(0.4),
+        Inches(0.5), Inches(6.3), Inches(12.333), Inches(0.4),
         icon="📖", font_size=12
     )
 
@@ -1997,40 +1997,32 @@ jq -nc --arg msg "$MSG" '{
         slide, """# Skill 中的 hook
 ---
 name: secure-operations
-description: Perform operations with security checks
 hooks:
   PreToolUse:
     - matcher: "Bash"
       hooks:
         - type: command
           command: "./scripts/security-check.sh"
----
 
 # Subagent 中的 hook
 ---
 name: code-reviewer
-description: Review code changes with automatic linting
 hooks:
   PreToolUse:
     - matcher: "Bash"
-      hooks:
-        - type: command
-          command: "./scripts/validate-command.sh"
+      hooks: [{ type: command, command: "./scripts/validate-command.sh" }]
   PostToolUse:
     - matcher: "Edit|Write"
-      hooks:
-        - type: command
-          command: "./scripts/run-linter.sh"
----
+      hooks: [{ type: command, command: "./scripts/run-linter.sh" }]
 
-// 當 agent 作為 subagent 觸發，Stop 自動轉為 SubagentStop""",
-        Inches(0.5), Inches(1.7), Inches(12.333), Inches(3.5),
-        font_size=10
+# 當 subagent 觸發，Stop 自動轉 SubagentStop""",
+        Inches(0.5), Inches(1.3), Inches(12.333), Inches(3.6),
+        font_size=9
     )
 
     h.add_text_block(
         slide, "📌 Hook 生命週期差異",
-        Inches(0.5), Inches(5.4), Inches(12.333), Inches(0.4),
+        Inches(0.5), Inches(5.05), Inches(12.333), Inches(0.4),
         font_size=14, bold=True, color=h.COLOR_PRIMARY
     )
 
@@ -2048,7 +2040,7 @@ hooks:
             "Subagent 完成時移除",
             "Stop 自動轉 SubagentStop",
         ],
-        top=Inches(5.8), height=Inches(1.2)
+        top=Inches(5.45), height=Inches(1.6)
     )
 
     # ============================================================
