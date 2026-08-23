@@ -925,13 +925,13 @@ git status --short
             ["disable-model-invocation: true", "✅", "❌", "描述不在 context；你叫用時才載入完整內容"],
             ["user-invocable: false", "❌", "✅", "描述始終在 context；叫用時載入完整內容"],
         ],
-        Inches(0.5), Inches(1.7), Inches(12.333), Inches(3.5),
+        Inches(0.5), Inches(1.7), Inches(12.333), Inches(2.8),
         font_size=12
     )
 
     h.add_text_block(
         slide, "📖 參考型 vs ⚡ 任務型",
-        Inches(0.5), Inches(5.4), Inches(12.333), Inches(0.4),
+        Inches(0.5), Inches(4.7), Inches(12.333), Inches(0.4),
         font_size=16, bold=True, color=h.COLOR_PRIMARY
     )
 
@@ -951,7 +951,7 @@ git status --short
             "只有你 /deploy 才會執行",
             "避免「程式碼看起來 OK 就部署」",
         ],
-        top=Inches(5.8), height=Inches(1.4)
+        top=Inches(5.1), height=Inches(1.7)
     )
 
     # ============================================================

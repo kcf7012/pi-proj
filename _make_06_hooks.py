@@ -1523,14 +1523,14 @@ jq -nc --arg seq "$seq" '{terminalSequence: $seq}'""",
     h.add_callout(
         slide,
         "Command hooks 以你的完整使用者權限執行 shell 命令。它們可以修改、刪除或訪問你的使用者帳戶可訪問的任何檔案。",
-        Inches(0.5), Inches(1.7), Inches(12.333), Inches(1.0),
-        icon="⚠️", font_size=14
+        Inches(0.5), Inches(1.5), Inches(12.333), Inches(0.7),
+        icon="⚠️", font_size=13
     )
 
     h.add_text_block(
         slide, "🔒 工作區信任機制",
-        Inches(0.5), Inches(2.9), Inches(12.333), Inches(0.4),
-        font_size=16, bold=True, color=h.COLOR_RED
+        Inches(0.5), Inches(2.3), Inches(12.333), Inches(0.4),
+        font_size=15, bold=True, color=h.COLOR_RED
     )
 
     h.add_bullet_list(
@@ -1539,14 +1539,14 @@ jq -nc --arg seq "$seq" '{terminalSequence: $seq}'""",
             "-p / SDK session：永遠不顯示對話框，直接執行（⚠️ 危險）",
             "外部 repo 用 --bare 或 --settings '{\"disableAllHooks\": true}'",
         ],
-        Inches(0.5), Inches(3.3), Inches(12), Inches(1.8),
-        font_size=12
+        Inches(0.5), Inches(2.7), Inches(12), Inches(1.2),
+        font_size=11
     )
 
     h.add_text_block(
         slide, "🛡 安全最佳實踐",
-        Inches(0.5), Inches(5.3), Inches(12.333), Inches(0.4),
-        font_size=16, bold=True, color=h.COLOR_GREEN
+        Inches(0.5), Inches(4.0), Inches(12.333), Inches(0.4),
+        font_size=15, bold=True, color=h.COLOR_GREEN
     )
 
     h.add_two_column_compare(
@@ -1566,7 +1566,7 @@ jq -nc --arg seq "$seq" '{terminalSequence: $seq}'""",
             "從未驗證的 repo 跑 hooks",
             "在 plugin 內用 ../ 共享檔案",
         ],
-        top=Inches(5.7), height=Inches(1.3)
+        top=Inches(4.4), height=Inches(2.4)
     )
 
     # ============================================================
@@ -1582,7 +1582,7 @@ jq -nc --arg seq "$seq" '{terminalSequence: $seq}'""",
 
     h.add_text_block(
         slide, "🔍 標準除錯流程",
-        Inches(0.5), Inches(1.7), Inches(12.333), Inches(0.4),
+        Inches(0.5), Inches(1.45), Inches(12.333), Inches(0.4),
         font_size=16, bold=True, color=h.COLOR_PRIMARY
     )
 
@@ -1595,8 +1595,8 @@ jq -nc --arg seq "$seq" '{terminalSequence: $seq}'""",
             "5. 確認 jq 已安裝",
             "6. 看退出碼：echo $?",
         ],
-        Inches(0.7), Inches(2.2), Inches(12), Inches(2.5),
-        font_size=12
+        Inches(0.7), Inches(1.85), Inches(12), Inches(2.0),
+        font_size=11
     )
 
     h.add_code_block(
@@ -1605,13 +1605,13 @@ claude --debug-file /tmp/claude.log
 
 # 在另一個 terminal
 tail -f /tmp/claude.log""",
-        Inches(0.5), Inches(4.9), Inches(12.333), Inches(1.2),
-        font_size=12
+        Inches(0.5), Inches(4.0), Inches(12.333), Inches(1.0),
+        font_size=11
     )
 
     h.add_text_block(
         slide, "📌 4 個最常見錯誤",
-        Inches(0.5), Inches(6.3), Inches(12.333), Inches(0.4),
+        Inches(0.5), Inches(5.2), Inches(12.333), Inches(0.4),
         font_size=14, bold=True, color=h.COLOR_RED
     )
 
@@ -1622,7 +1622,7 @@ tail -f /tmp/claude.log""",
             "❌ jq 沒裝 → parse 錯誤（apt install jq）",
             "❌ hook JSON 沒生效 → 檢查 shell profile 沒有 echo 干擾",
         ],
-        Inches(0.5), Inches(6.7), Inches(12.333), Inches(0.9),
+        Inches(0.5), Inches(5.6), Inches(12.333), Inches(0.9),
         font_size=10
     )
 
@@ -1922,34 +1922,26 @@ $ echo $?
     h.add_code_block(
         slide, """#!/bin/bash
 # ~/.claude/hooks/run-tests-async.sh
-
 input=$(cat)
 FILE_PATH=$(echo "$input" | jq -r '.tool_input.file_path // empty')
-
-# 只對原始碼跑
 if [[ "$FILE_PATH" != *.ts && "$FILE_PATH" != *.js ]]; then
   exit 0
 fi
-
-# 跑測試
 RESULT=$(npm test 2>&1)
 EXIT_CODE=$?
-
 if [ $EXIT_CODE -eq 0 ]; then
-  MSG="Tests passed after editing $FILE_PATH"
+  MSG="Tests passed after $FILE_PATH"
 else
-  MSG="Tests failed after editing $FILE_PATH: $RESULT"
+  MSG="Tests failed: $RESULT"
 fi
-
-# 透過 additionalContext 把結果給 Claude
 jq -nc --arg msg "$MSG" '{
   hookSpecificOutput: {
     hookEventName: "PostToolUse",
     additionalContext: $msg
   }
 }'""",
-        Inches(0.5), Inches(2.2), Inches(7), Inches(4.0),
-        font_size=10
+        Inches(0.5), Inches(2.2), Inches(7), Inches(3.5),
+        font_size=9
     )
 
     h.add_text_block(
@@ -1980,8 +1972,8 @@ jq -nc --arg msg "$MSG" '{
 // async: Claude 不等結果
 // timeout: 5 分鐘
 // additionalContext: 結果在下輪回報給 Claude""",
-        Inches(7.833), Inches(2.6), Inches(5), Inches(3.5),
-        font_size=10
+        Inches(7.833), Inches(2.6), Inches(5), Inches(3.3),
+        font_size=9
     )
 
     h.add_callout(
