@@ -31,9 +31,13 @@
 | 編號 | 檔案 | 投影片數 | 對應 |
 |:----:|:-----|:--------:|:----|
 | 00 | `00-overview.pptx` | 30 張 | 系列總覽 |
+| 01 | `01-plugin-marketplaces.pptx` | 35 張 | 建立並分發 Marketplace |
 | 02 | `02-plugins.pptx` | 25 張 | Plugin 開發 |
+| 03 | `03-plugins-reference.pptx` | 45 張 | Plugin 技術參考 |
 | 04 | `04-skills.pptx` | 40 張 | Skills 完整指南 |
+| 05 | `05-subagents.pptx` | 30 張 | Subagents 自訂指南 |
 | 06 | `06-hooks.pptx` | 50 張 | Hooks 自動化 |
+| 07 | `07-discover-plugins.pptx` | 22 張 | 探索並安裝 Plugins |
 
 > 簡報與對應的 .md 檔案結構一致，方便交叉對照。
 
@@ -71,9 +75,13 @@ uv pip install --python .pptx-venv/bin/python python-pptx
 
 # 產生所有簡報
 .pptx-venv/bin/python _make_00_overview.py
+.pptx-venv/bin/python _make_01_marketplaces.py
 .pptx-venv/bin/python _make_02_plugins.py
+.pptx-venv/bin/python _make_03_plugins_reference.py
 .pptx-venv/bin/python _make_04_skills.py
+.pptx-venv/bin/python _make_05_subagents.py
 .pptx-venv/bin/python _make_06_hooks.py
+.pptx-venv/bin/python _make_07_discover_plugins.py
 ```
 
 ### 修改與自訂
