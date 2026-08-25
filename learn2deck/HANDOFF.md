@@ -2,19 +2,36 @@
 
 > **交接給下一個任務使用**
 > 建立日期：2026/08
-> 最後更新：2026/08（Phase 8 完成）
+> 最後更新：2026/08（Phase 9 部分完成）
 > 對應 GitHub：[kcf7012/pi-proj](https://github.com/kcf7012/pi-proj) `develop` 分支
-> 對應 commit：`34a6e38` (Phase 8)
+> 對應 commit：`048ebba` (Phase 9 部分)
 
 ---
 
 ## 0. 狀態總結（2026/08）
 
 - ✅ **Phase 1-8 全部完成**：套件骨架、核心資料結構、pptx_helpers、內建主題、9 種 builder、Markdown 解析器、4 條驗證規則、CLI 整合
-- ✅ **8 份現有 .md 全部能 CLI build + validate 通過**
-- ⏳ **Phase 9 待做**：用 8 份現有 .md 重產 8 份 PPTX 視覺驗證（**最重要的成功標準**）
+- ✅ **Phase 9 部分完成**：markdown inline strip（`commits e7b3f2d` + `048ebba`）+ 結構驗證工具
+- ⏳ **Phase 9 剩餘**：完整視覺驗證需由使用者用 LibreOffice / PowerPoint 比對
 - ⏳ **Phase 10 待做**：文檔 + examples + 發佈
-- 📊 **目前狀態**：**220 個測試全通過**、9 個 commit、純規則版完成
+- 📊 **目前狀態**：**230 個測試全通過**、11 個 commit、純規則版完成
+
+### Phase 9 環境限制
+
+本環境無 LibreOffice / PowerPoint / pdftoppm，無法做真正的「視覺並排比對」。Phase 9 退而求其次：
+
+1. **結構驗證**：tools/structural_report.py 量化 8 份新舊 pptx 的 slide 數 / shape 數 / 文字量
+2. **版面檢查**：tools/layout_check.py 檢查形狀是否超出安全區、表格 / code 是否塞不下
+3. **parser bug 修正**：markdown inline strip（commit `e7b3f2d`）
+4. **最終人工視覺驗證**：使用者需在本機用 LibreOffice 開新舊 .pptx 並排確認
+
+### Phase 9 識別但未修正的 bug（建議 v1.1）
+
+- ⚠️ markdown parser 不會自動插入 COVER slide
+- ⚠️ markdown parser 不會自動插入 SECTION_DIVIDER（無 `Part X` 偵測）
+- ⚠️ grid_cards 推斷優先順序：當 H2 同時有 code + H3>=3 時，code 勝出而非 grid_cards
+- ⚠️ 範例程式碼內的 `## H2`（如 SKILL.md 範例）會被誤認為頂層章節
+- ⚠️ numbered list（`1. ` 開頭）不會被解析成 bullet
 
 ---
 
@@ -25,7 +42,7 @@
 **最終成功標準**（最重要，**不能妥協**）：
 > 用 learn2deck 重新產出的 8 份 PPTX（00/01/02/03/04/05/06/07）必須在版面、內容、視覺上與 pi-proj 現有版本**無法區分**。
 
-> **Phase 8 進度**：CLI 端到端可用，R1/R2/R3/R5 驗證規則正常運作，但**視覺上**還沒有人工比對確認。
+> **Phase 9 進度**：markdown inline 標記已正確 strip（表格 cell 不再顯示 `**` 和 `` ` ``），但**完整視覺驗證**還沒做（環境限制 + 還有多個 builder bug 待修）。
 
 ---
 
@@ -77,12 +94,19 @@
 │           ├── safe_zone.py (R3)
 │           ├── file_format.py (R5)
 │           └── __init__.py
+├── tools/                              ✓ Phase 9
+│   ├── inspect_deck.py                 ← DeckSpec 解析結果
+│   ├── inspect_pptx.py                 ← PPTX 詳細 shape / 文字 / 字級 / 顏色
+│   ├── diff_pptx.py                    ← 兩份 PPTX 並排結構比對
+│   ├── layout_check.py                 ← 版面超出 / 表格塞不下 / code 框警告
+│   ├── structural_diff.py              ← 8 份新舊 slide / shape / text 統計
+│   └── structural_report.py            ← 產出 markdown 結構比對報告
 └── tests/
     ├── test_core.py                   ← 21 tests
     ├── test_pptx_helpers.py           ← 31 tests
     ├── test_themes.py                 ← 20 tests
     ├── test_builders.py               ← 26 tests
-    ├── test_parsers.py                ← 54 tests
+    ├── test_parsers.py                ← 64 tests (+10 inline strip)
     ├── test_validators.py             ← 38 tests
     └── test_cli.py                    ← 30 tests
 ```
@@ -90,7 +114,7 @@
 ### 2.2 測試結果
 
 ```
-220 passed in 3.42s
+230 passed in 3.40s   (Phase 9 後)
 ```
 
 ### 2.3 重要設計決策（不要變更）
@@ -231,15 +255,20 @@ bg = shapes.add_shape(...)
 
 ## 6. 待確認事項
 
-- ⏳ **Phase 9 視覺驗證（最關鍵）**：用 8 份 .md 重產 8 份 PPTX，**逐張人工比對**與 pi-proj 現有版本是否視覺一致
-  - 用 LibreOffice 或 PowerPoint 開啟新舊版本
-  - 重點檢查：標題位置、字體大小、code 框高度、卡片對齊
-  - 預期可能需要微調 builder 的 `top`、`height`、`font_size` 等參數
+- ⏳ **Phase 9 完整視覺驗證**：本環境無 LibreOffice，使用者需在本機開新舊 .pptx 並排人工確認
+  - 8 份新舊 .pptx 路徑：
+    - 新：`/tmp/new_00-claude-code-plugins-series.pptx` 等 8 份
+    - 舊：`/home/elan/pi-proj/00-overview.pptx` 等 8 份
+  - 重要檢查點（commit `048ebba` 後已修正）：
+    - 表格 cell 不應再顯示 `**bold**` 或 `` `code` `` （已修正 ✅）
+    - bullet 文字不應再有 markdown 標記（已修正 ✅）
+    - subtitle 也不應有 markdown 標記（已修正 ✅）
 - ⏳ **CALLOUT 在 two_column 中的特殊處理**（目前直接用 title_content builder）
 - ⏳ **YAML outline 解析**：目前只支援 .md，.yaml/.yml 拋出 NotImplementedError
 - ⏳ **chinese 標點在 code block 中的字寬**：可能導致某些行被截斷
 - ⏳ **inline code（`code`）的處理**：Markdown 內的 `code` 反引號目前不會觸發 title_code builder
 - ⏳ **Section 與 Section 之間的 H2 內容重複**：例如 06-hooks 有多個 H2 內含程式碼，可能需要拆分
+- ⚠️ **04-skills.md slide 5/21 仍有 raw markdown**：因為範例 SKILL.md 的 H2 被 parser 誤認為頂層章節，需重整 .md 或加 code block 偵測
 
 ---
 
@@ -267,25 +296,32 @@ python-pptx 會在 fill/line 操作後重換 XML。迭代 `slide.shapes` 重新�
 
 ## 8. 建議下一步
 
-### Phase 9：視覺驗證（**最關鍵的成功標準**）
-目標：確認 8 份新產出的 PPTX 與 pi-proj 現有版本視覺一致
+### Phase 9：視覺驗證（部分完成）
 
-1. 開啟 PowerPoint 或 LibreOffice
-2. 對比 `01-plugin-marketplaces.pptx`（新）vs `01-plugin-marketplaces.pptx`（舊）
-3. 逐張檢查：版面、字體、顏色、code 框容量
-4. 發現差異 → 改 builder（不是改 _pptx_helpers.py）→ 重跑測試 → 重產
-5. 重複 8 次
+已完成：
+- ✅ 結構驗證工具（tools/）
+- ✅ Markdown inline strip（`strip_markdown_inline`）
+- ✅ 8 份新 .pptx 重產 + validate pass
 
-具體檢查清單：
-- [ ] Cover: 大標題、副標題、tag 位置
-- [ ] Objectives: 卡片網格對齊、icon 位置
-- [ ] Section: 大編號字級、位置
-- [ ] Title+content: bullets 對齊、字級
-- [ ] Title+table: 表格 alternating row bg
-- [ ] Title+code: code 框高度、字體 monospace
-- [ ] Two column: 卡片邊框顏色、bullet 對齊
-- [ ] Grid cards: 卡片大小、icon 位置
-- [ ] Summary: 關鍵要點、下一步
+**未完成（需使用者配合）**：
+- ⚠️ 人工視覺驗證：本機用 LibreOffice / PowerPoint 並排開啟新舊 8 份 .pptx 確認
+  - 新：`/tmp/new_*.pptx`
+  - 舊：`/home/elan/pi-proj/00-07*.pptx`
+- ⚠️ 4 個 builder / parser bug（見§0 Phase 9 識別但未修正）
+
+產出命令：
+```bash
+cd /home/elan/pi-proj/learn2deck
+for md in ../0?-*.md; do
+  base=$(basename "$md" .md)
+  /home/elan/pi-proj/.pptx-venv/bin/learn2deck build "$md" \
+    -o "/tmp/new_${base}.pptx" --validate
+done
+
+# 結構驗證
+/home/elan/pi-proj/.pptx-venv/bin/python tools/structural_report.py
+/home/elan/pi-proj/.pptx-venv/bin/python tools/layout_check.py /tmp/new_*.pptx
+```
 
 ### Phase 10：文檔 + 發佈
 
@@ -338,4 +374,8 @@ done
 
 ---
 
-**Handoff 結束。下一個任務接手者請從「Phase 9 視覺驗證」開始（最重要的成功標準）。**
+**Handoff 結束。下一個任務接手者請從「Phase 9 剩餘 + Phase 10」開始：**
+
+1. **Phase 9 剩餘（使用者主導）**：用 LibreOffice 開新舊 8 份 .pptx 並排確認
+2. **Phase 9 bug 修正**：修正§0 列出的 4 個 builder / parser bug
+3. **Phase 10**：文檔 + examples + 發佈
