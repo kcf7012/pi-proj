@@ -1,0 +1,69 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "learn2deck"
+version = "0.1.0"
+description = "從 Markdown 教材與技術文件產生符合設計風格的 PPTX 簡報"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+    { name = "Kenny Kang", email = "kcf7012@example.com" },
+]
+keywords = ["pptx", "presentation", "markdown", "claude-code", "skill"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Office/Business",
+    "Topic :: Text Processing :: Markup :: Markdown",
+]
+dependencies = [
+    "python-pptx>=1.0.0",
+    "pyyaml>=6.0",
+    "typer>=0.9.0",
+    "pydantic>=2.0",
+    "pydantic-settings>=2.0",  # v1.1 開始用，先列著
+    "rich>=13.0",  # CLI 輸出美化
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-asyncio>=0.21",
+    "pytest-cov>=4.0",
+    "ruff>=0.1.0",  # linter
+]
+llm = [
+    "anthropic>=0.25.0",  # v1.1+
+]
+
+[project.scripts]
+learn2deck = "learn2deck.cli:app"
+
+[project.urls]
+Homepage = "https://github.com/kcf7012/pi-proj"
+Repository = "https://github.com/kcf7012/pi-proj"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["learn2deck*"]
+
+[tool.setuptools.package-data]
+"learn2deck.lib.themes" = ["*.yaml"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP"]
+ignore = ["E501"]  # line-too-long（由 formatter 控制）
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+asyncio_mode = "auto"
