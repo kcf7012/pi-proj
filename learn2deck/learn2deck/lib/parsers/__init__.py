@@ -11,6 +11,7 @@ from .inference import (
     extract_markdown_table,
     extract_bullet_items,
     extract_paragraph_text,
+    strip_markdown_inline,
 )
 
 
@@ -47,6 +48,7 @@ __all__ = [
     "extract_markdown_table",
     "extract_bullet_items",
     "extract_paragraph_text",
+    "strip_markdown_inline",
 ]
 
 

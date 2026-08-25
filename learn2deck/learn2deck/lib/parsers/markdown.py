@@ -24,6 +24,7 @@ from .inference import (
     count_h3_subsections, detect_code_blocks, detect_markdown_table,
     extract_bullet_items, extract_code_block, extract_markdown_table,
     extract_paragraph_text, has_pros_cons_structure, infer_slide_type,
+    strip_markdown_inline,
 )
 
 
@@ -249,10 +250,10 @@ def _build_slide_from_section(
 
     return SlideContent(
         type=inferred_type,
-        title=title,
-        subtitle=subtitle,
+        title=strip_markdown_inline(title),
+        subtitle=strip_markdown_inline(subtitle) if subtitle else None,
         body=slide_body,
-        source_ref=title,
+        source_ref=strip_markdown_inline(title),
     )
 
 
@@ -326,7 +327,7 @@ def _extract_grid_items_from_h3(body: str) -> list[dict]:
         re.MULTILINE | re.DOTALL
     )
     for m in pattern.finditer(body):
-        h3_title = m.group(1).strip()
+        h3_title = strip_markdown_inline(m.group(1).strip())
         h3_body = m.group(2).strip()
         # 描述 = 第一段
         desc = extract_paragraph_text(h3_body).split("\n")[0] if h3_body else ""
@@ -361,7 +362,7 @@ def _extract_objectives_items(body: str) -> list[dict]:
                 if icon_match:
                     icon = icon_match.group(1)
                     title = icon_match.group(2)
-            items.append({"icon": icon, "title": title, "desc": desc})
+            items.append({"icon": icon, "title": strip_markdown_inline(title), "desc": strip_markdown_inline(desc)})
     return items
 
 

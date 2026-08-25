@@ -191,17 +191,45 @@ def extract_markdown_table(body_text: str) -> tuple[list[str], list[list[str]]]:
             # 檢查下一行是否是 separator（|:---| 或 | --- |）
             if re.match(r"^\|?(\s*:?-+:?\s*\|)+\s*:?-+:?\s*\|?$", stripped):
                 # 解析標題
-                headers = split_row(line)
+                headers = [strip_markdown_inline(h) for h in split_row(line)]
                 # 解析後續的資料列
                 for j in range(i + 2, len(lines)):
                     if "|" not in lines[j]:
                         break
-                    row = split_row(lines[j])
+                    row = [strip_markdown_inline(c) for c in split_row(lines[j])]
                     if row:
                         rows.append(row)
                 break
 
     return headers, rows
+
+
+def strip_markdown_inline(text: str) -> str:
+    """移除 markdown inline 標記（粗體、斜體、code）
+
+    規則：
+    - `` `code` `` → `code`（保留內容但去掉反引號）
+    - `**bold**` → `bold`
+    - `*italic*` → `italic`
+    - `__bold__` → `bold`
+    - `_italic_` → `italic`
+    - `[text](url)` → `text`（保留連結文字）
+
+    表格 cell / bullet 文字會經過這個處理。
+    """
+    if not text:
+        return text
+    # inline code: `` `content` `` → content
+    text = re.sub(r"`([^`]+)`", r"\1", text)
+    # bold: **text** or __text__ → text
+    text = re.sub(r"\*\*(.+?)\*\*", r"\1", text)
+    text = re.sub(r"__(.+?)__", r"\1", text)
+    # italic: *text* or _text_ → text（單個 * 或 _ 不在 word boundary 上避免誤刪）
+    text = re.sub(r"(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)", r"\1", text)
+    text = re.sub(r"(?<!_)_(?!_)(.+?)(?<!_)_(?!_)", r"\1", text)
+    # link: [text](url) → text
+    text = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", text)
+    return text
 
 
 def extract_bullet_items(body_text: str) -> list[str]:
@@ -215,7 +243,7 @@ def extract_bullet_items(body_text: str) -> list[str]:
         # 匹配 "- " 或 "* " 開頭
         match = re.match(r"^\s*[-*]\s+(.+)$", line)
         if match:
-            items.append(match.group(1).strip())
+            items.append(strip_markdown_inline(match.group(1).strip()))
     return items
 
 
@@ -245,6 +273,6 @@ def extract_paragraph_text(body_text: str) -> str:
         # 跳過空行
         if not line.strip():
             continue
-        lines.append(line.strip())
+        lines.append(strip_markdown_inline(line.strip()))
 
     return "\n".join(lines)

@@ -25,6 +25,7 @@ from learn2deck.lib.parsers import (
     extract_markdown_table,
     extract_bullet_items,
     extract_paragraph_text,
+    strip_markdown_inline,
     FrontmatterResult,
 )
 from learn2deck.lib.core import (
@@ -235,6 +236,51 @@ text line 2
         assert "text line 1" in para
         assert "# Title" not in para
         assert ">" not in para
+
+
+class TestStripMarkdownInline:
+    """markdown inline 標記移除"""
+
+    def test_inline_code(self):
+        assert strip_markdown_inline("run `ls -la` here") == "run ls -la here"
+
+    def test_bold_double_asterisk(self):
+        assert strip_markdown_inline("**bold text**") == "bold text"
+
+    def test_bold_underscore(self):
+        assert strip_markdown_inline("__bold text__") == "bold text"
+
+    def test_italic_asterisk(self):
+        assert strip_markdown_inline("*italic*") == "italic"
+
+    def test_italic_underscore(self):
+        assert strip_markdown_inline("_italic_") == "italic"
+
+    def test_link(self):
+        assert strip_markdown_inline("[text](https://example.com)") == "text"
+
+    def test_combined(self):
+        assert strip_markdown_inline("**`code-bold`**") == "code-bold"
+
+    def test_table_cell_with_inline(self):
+        """表格 cell 文字應被 strip"""
+        body = """| A | B |
+| --- | --- |
+| `**bold**` | plain |"""
+        headers, rows = extract_markdown_table(body)
+        assert headers == ["A", "B"]
+        # `` `**bold**` `` → **bold**（去反引號）→ bold（去 **）
+        assert rows == [["bold", "plain"]]
+
+    def test_bullet_with_inline(self):
+        body = "- **bold item** with `code`"
+        items = extract_bullet_items(body)
+        assert items == ["bold item with code"]
+
+    def test_paragraph_with_inline(self):
+        body = "Some **bold** text with `code` here"
+        para = extract_paragraph_text(body)
+        assert para == "Some bold text with code here"
 
 
 # === Markdown parser ===
