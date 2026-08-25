@@ -16,7 +16,7 @@ from .exceptions import (
     CostLimitExceeded,
     LLMUnavailable,
 )
-from .theme import Theme, load_theme, list_builtin_themes
+from .theme import Theme, load_theme, load_theme_from_path, list_builtin_themes
 from .deck import SlideType, SlideContent, DeckSpec
 
 __all__ = [
@@ -39,6 +39,7 @@ __all__ = [
     # 資料結構
     "Theme",
     "load_theme",
+    "load_theme_from_path",
     "list_builtin_themes",
     "SlideType",
     "SlideContent",

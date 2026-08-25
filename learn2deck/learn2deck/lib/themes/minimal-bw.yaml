@@ -1,0 +1,65 @@
+# themes/minimal-bw.yaml
+# 黑白極簡風（學術/技術分享適用）
+name: minimal-bw
+description: 黑白極簡風，適合學術或技術分享
+
+colors:
+  primary: "#000000"        # 純黑
+  dark: "#1A1A1A"           # 接近黑（主要文字）
+  bg_cream: "#FFFFFF"       # 純白背景
+  bg_gray: "#F5F5F5"        # 淺灰（卡片背景）
+  blue: "#0066CC"           # 冷色藍
+  green: "#008844"          # 節制綠
+  red: "#CC0000"            # 警告紅
+  white: "#FFFFFF"
+  gray_text: "#888888"      # 次要文字
+  code_bg: "#F8F8F8"        # 淺灰底（不像 claude-orange 用深色）
+  code_fg: "#1A1A1A"        # 深色字
+
+fonts:
+  title: "Helvetica"
+  body: "Helvetica"
+  mono: "Monaco"
+
+font_sizes:
+  cover_title: 48            # 比橘色稍小（更簡潔）
+  cover_subtitle: 20
+  slide_title: 28
+  slide_subtitle: 14
+  body: 13
+  code: 11
+  callout: 12
+  brand: 9
+  section_num: 80
+  section_title: 36
+  section_subtitle: 16
+
+layout:
+  # 簡報尺寸
+  slide_width: 13.333
+  slide_height: 7.5
+
+  # 安全區域
+  content_top: 1.3
+  content_bottom: 7.0
+  brand_y: 7.1
+
+  # 標題列
+  title_top: 0.3
+  title_height: 0.7
+  subtitle_top: 1.0
+  subtitle_height: 0.4
+
+  # 內邊距
+  content_left: 0.7          # 比橘色稍寬（更寬鬆）
+  content_right_margin: 0.7
+  column_gap: 0.2
+
+decorations:
+  top_accent_bar:
+    enabled: true
+    height: 0.05             # 比橘色更細（極簡）
+    color: primary
+  brand_text:
+    left: "learn2deck"        # 簡短品牌文字
+    right_template: "{source}"

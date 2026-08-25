@@ -146,19 +146,22 @@ def load_theme(name_or_path: str) -> Theme:
         ThemeNotFoundError: 找不到主題
         ThemeValidationError: 主題格式錯誤
     """
+    return load_theme_from_path_or_name(name_or_path)
+
+
+def load_theme_from_path_or_name(name_or_path: str) -> Theme:
+    """從名稱或路徑載入主題（內部實作）"""
     # 判斷是路徑還是名稱
     path = Path(name_or_path)
     if path.exists() and path.is_file():
-        theme_path = path
-    else:
-        # 嘗試從內建主題目錄找
-        theme_path = _builtin_themes_dir() / f"{name_or_path}.yaml"
-        if not theme_path.exists():
-            raise ThemeNotFoundError(
-                f"找不到主題：'{name_or_path}'。"
-                f"已搜尋：{name_or_path} 與 {_builtin_themes_dir() / (name_or_path + '.yaml')}"
-            )
-
+        return _load_theme_from_file(path)
+    # 嘗試從內建主題目錄找
+    theme_path = _builtin_themes_dir() / f"{name_or_path}.yaml"
+    if not theme_path.exists():
+        raise ThemeNotFoundError(
+            f"找不到主題：'{name_or_path}'。"
+            f"已搜尋：{name_or_path} 與 {_builtin_themes_dir() / (name_or_path + '.yaml')}"
+        )
     return _load_theme_from_file(theme_path)
 
 

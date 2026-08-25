@@ -151,9 +151,11 @@ class TestDeckSpec:
 
 # === Theme ===
 class TestTheme:
-    def test_builtin_list_empty(self):
-        """目前 themes/ 是空的，list 應回傳 []"""
-        assert list_builtin_themes() == []
+    def test_builtin_list_not_empty(self):
+        """內建主題目錄應至少有幾個主題（Phase 4 後變非空）"""
+        themes = list_builtin_themes()
+        assert len(themes) >= 2
+        assert "claude-orange" in themes
 
     def test_load_nonexistent_raises(self):
         """不存在的路徑應拋出 ThemeNotFoundError"""
