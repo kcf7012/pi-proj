@@ -40,12 +40,30 @@ class TitleCodeBuilder(BaseBuilder):
         language = body.get("language", "bash")
         font_size = body.get("font_size", 11)
 
+        # 動態計算高度與字級
+        from ..pptx_helpers.layout import LINE_HEIGHTS
+        n_lines = code.count("\n") + 1
+        max_height = 5.5
+
+        # 依行數自動調整字級
+        for try_size in [font_size, 10, 9, 8]:
+            line_h = LINE_HEIGHTS.get(try_size, try_size / 72 * 1.2)
+            needed = n_lines * line_h + 0.3
+            if needed <= max_height:
+                font_size = try_size
+                height = needed
+                break
+        else:
+            font_size = 8
+            line_h = LINE_HEIGHTS[font_size]
+            height = max_height
+
         add_code_block(
             slide, code,
             left=Inches(0.7),
             top=Inches(1.7),
             width=Inches(11.933),
-            height=Inches(4.8),
+            height=Inches(height),
             language=language,
             font_size=font_size,
             theme=self.theme,
