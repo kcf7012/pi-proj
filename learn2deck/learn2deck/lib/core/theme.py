@@ -162,6 +162,22 @@ def load_theme(name_or_path: str) -> Theme:
     return _load_theme_from_file(theme_path)
 
 
+def load_theme_from_path(path: str | Path) -> Theme:
+    """從 YAML 檔案路徑載入主題（便利函式）
+
+    Args:
+        path: YAML 檔案路徑
+
+    Returns:
+        Theme 物件
+    """
+    return _load_theme_from_file(Path(path))
+
+
+# 為方便使用，Theme 類別增加 from_yaml classmethod
+Theme.from_yaml = classmethod(lambda cls, path: load_theme_from_path(path))
+
+
 def _load_theme_from_file(path: Path) -> Theme:
     """從 YAML 檔案載入主題"""
     try:
