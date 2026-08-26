@@ -1,0 +1,56 @@
+# 簡報大綱（YAML 格式）
+# 注意：learn2deck v1.0 主要支援 .md，YAML 解析尚未實作
+# 此檔案作為未來 v1.1+ 的規格範例
+
+deck:
+  title: Plugin 開發介紹
+  subtitle: 從零開始建立 Claude Code Plugin
+  theme: claude-orange
+  source_ref: minimal-plugin/content.md
+
+slides:
+  - type: cover
+    title: Plugin 開發介紹
+    subtitle: 從零開始建立 Claude Code Plugin
+    body:
+      tag: 範例 · #demo
+
+  - type: section_divider
+    title: Part 1: 基礎概念
+    subtitle: 理解 Plugin 是什麼
+
+  - type: title_table
+    title: Plugin vs 獨立配置
+    subtitle: 兩種擴展 Claude Code 的方式
+    body:
+      headers: [面向, 獨立配置（.claude/), Plugin]
+      rows:
+        - [Skill 名稱, /hello, /plugin-name:hello]
+        - [可用範圍, 僅當前專案, 跨專案、跨團隊]
+        - [分享方式, 手動複製, 透過 marketplace 一鍵安裝]
+        - [版本管理, 無, semver 或 git SHA]
+        - [適合情境, 個人、實驗, 團隊、正式、跨專案]
+
+  - type: grid_cards
+    title: Plugin 的 3 種元件
+    subtitle: Plugin 可包含的核心元件
+    body:
+      items:
+        - icon: 📚
+          title: Skills
+          desc: 可重用的知識庫 · /skill-name 觸發
+        - icon: 🤖
+          title: Agents
+          desc: 隔離的子任務 · 用 Task 工具呼叫
+        - icon: 🪝
+          title: Hooks
+          desc: 事件驅動腳本 · PreToolUse / PostToolUse
+
+  - type: summary
+    title: 下一步
+    subtitle: 建立你的第一個 Plugin
+    body:
+      key_points:
+        - 建立 `.claude-plugin/plugin.json`
+        - 翻完 02-plugins.md
+        - 建立 hello-world plugin

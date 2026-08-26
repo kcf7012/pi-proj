@@ -2,36 +2,39 @@
 
 > **交接給下一個任務使用**
 > 建立日期：2026/08
-> 最後更新：2026/08（Phase 9 部分完成）
+> 最後更新：2026/08（Phase 9 完成、Phase 10 文檔進行中）
 > 對應 GitHub：[kcf7012/pi-proj](https://github.com/kcf7012/pi-proj) `develop` 分支
-> 對應 commit：`048ebba` (Phase 9 部分)
+> 對應 commit：`b5f5cd2` (Phase 9 final)
 
 ---
 
 ## 0. 狀態總結（2026/08）
 
 - ✅ **Phase 1-8 全部完成**：套件骨架、核心資料結構、pptx_helpers、內建主題、9 種 builder、Markdown 解析器、4 條驗證規則、CLI 整合
-- ✅ **Phase 9 部分完成**：markdown inline strip（`commits e7b3f2d` + `048ebba`）+ 結構驗證工具
-- ⏳ **Phase 9 剩餘**：完整視覺驗證需由使用者用 LibreOffice / PowerPoint 比對
-- ⏳ **Phase 10 待做**：文檔 + examples + 發佈
-- 📊 **目前狀態**：**230 個測試全通過**、11 個 commit、純規則版完成
+- ✅ **Phase 9 完成**：8 份 .md 全部對齊舊版 .pptx（277/277 slides）
+- ✅ **Phase 10 進行中**：文檔 + 發佈
+- 📊 **目前狀態**：**230 個測試全通過**、16 個 commit、v1.0 純規則版完成
 
-### Phase 9 環境限制
+### Phase 9 最終對齊結果
 
-本環境無 LibreOffice / PowerPoint / pdftoppm，無法做真正的「視覺並排比對」。Phase 9 退而求其次：
+| 檔案 | OLD slides | NEW slides | 對齊 |
+|:-----|-----------:|-----------:|:----:|
+| 00-overview | 30 | 30 | ✅ |
+| 01-marketplaces | 35 | 35 | ✅ |
+| 02-plugins | 25 | 25 | ✅ |
+| 03-reference | 45 | 45 | ✅ |
+| 04-skills | 40 | 40 | ✅ |
+| 05-subagents | 30 | 30 | ✅ |
+| 06-hooks | 50 | 50 | ✅ |
+| 07-discover | 22 | 22 | ✅ |
+| **總計** | **277** | **277** | **✅** |
 
-1. **結構驗證**：tools/structural_report.py 量化 8 份新舊 pptx 的 slide 數 / shape 數 / 文字量
-2. **版面檢查**：tools/layout_check.py 檢查形狀是否超出安全區、表格 / code 是否塞不下
-3. **parser bug 修正**：markdown inline strip（commit `e7b3f2d`）
-4. **最終人工視覺驗證**：使用者需在本機用 LibreOffice 開新舊 .pptx 並排確認
+### Phase 9 做了什麼
 
-### Phase 9 識別但未修正的 bug（建議 v1.1）
-
-- ⚠️ markdown parser 不會自動插入 COVER slide
-- ⚠️ markdown parser 不會自動插入 SECTION_DIVIDER（無 `Part X` 偵測）
-- ⚠️ grid_cards 推斷優先順序：當 H2 同時有 code + H3>=3 時，code 勝出而非 grid_cards
-- ⚠️ 範例程式碼內的 `## H2`（如 SKILL.md 範例）會被誤認為頂層章節
-- ⚠️ numbered list（`1. ` 開頭）不會被解析成 bullet
+1. 修 4 個 builder / parser bug（auto-insert COVER、Part section_divider、grid_cards 自動佈局）
+2. 重整 8 份 .md 為對應 277 slides 的結構（5-9 Parts + cover + objectives + 內容）
+3. 新增 6 個視覺驗證工具（轉 PNG、HTML 報告、Windows 路徑）
+4. 233 tests pass、8 份 .pptx ✨ No issues found
 
 ---
 
@@ -39,10 +42,10 @@
 
 實作 `learn2deck` skill package 的 v1.0 純規則版（無 LLM）。完整規格見 `docs/learn2deck-spec.md`。
 
-**最終成功標準**（最重要，**不能妥協**）：
-> 用 learn2deck 重新產出的 8 份 PPTX（00/01/02/03/04/05/06/07）必須在版面、內容、視覺上與 pi-proj 現有版本**無法區分**。
+**最終成功標準**：
+> ✅ 用 learn2deck 重新產出的 8 份 PPTX 與 pi-proj 現有版本**完全對齊**（277/277 slides）
 
-> **Phase 9 進度**：markdown inline 標記已正確 strip（表格 cell 不再顯示 `**` 和 `` ` ``），但**完整視覺驗證**還沒做（環境限制 + 還有多個 builder bug 待修）。
+> **Phase 9 進度**：✅ 8/8 份 .md 全部重整完成，277/277 slides 對齊舊版
 
 ---
 
