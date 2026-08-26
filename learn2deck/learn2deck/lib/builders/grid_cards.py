@@ -44,27 +44,41 @@ class GridCardsBuilder(BaseBuilder):
         # 2. 卡片
         body = self.require_body(content, "items")
         items = body["items"]
-        cols = body.get("cols", 3)
+        cols = body.get("cols", 0)  # 0 = 自動推算
 
         if not isinstance(items, list) or len(items) == 0:
             raise MissingFieldError(
                 f"GridCards '{content.title}' 的 items 應為非空 list"
             )
 
-        # 計算版面
+        # 計算欄位數（安全區 7.0" - start_y 1.8" = 可用 5.2"）
         n_items = len(items)
+        if cols == 0:
+            if n_items <= 3:
+                cols = n_items  # 1, 2, 3 個都用 n
+            elif n_items <= 4:
+                cols = 2
+            elif n_items <= 6:
+                cols = 3
+            else:  # 7-9
+                cols = min(4, n_items)
         rows = (n_items + cols - 1) // cols
 
-        # 卡片尺寸（依欄數調整）
-        if cols <= 3:
-            card_w = 3.8
-            card_h = 2.2
+        # 卡片尺寸（依欄數調整，避免超出 7.0" 安全區）
+        if cols <= 2:
+            card_w = 5.5
+            card_h = 2.4
             v_gap = 0.3
             h_gap = 0.4
-        else:
-            card_w = 2.8
-            card_h = 2.0
-            v_gap = 0.2
+        elif cols <= 3:
+            card_w = 3.8
+            card_h = 1.8  # 1.8" 高，3 排 = 5.4 + 1.8 start = 7.2
+            v_gap = 0.25
+            h_gap = 0.4
+        else:  # 4 cols
+            card_w = 2.9
+            card_h = 2.3  # 2.3" 高，2 排 = 4.6 + 1.8 start = 6.4（7.0 安全區內）
+            v_gap = 0.25
             h_gap = 0.2
 
         grid_w = card_w * cols + h_gap * (cols - 1)
@@ -130,19 +144,19 @@ class GridCardsBuilder(BaseBuilder):
         if icon:
             from pptx.util import Pt
             icon_box = slide.shapes.add_textbox(
-                Inches(x), Inches(y + 0.2), Inches(w), Inches(0.7)
+                Inches(x), Inches(y + 0.15), Inches(w), Inches(0.6)
             )
             tf = icon_box.text_frame
             p = tf.paragraphs[0]
             p.alignment = PP_ALIGN.CENTER
             run = p.add_run()
             run.text = icon
-            run.font.size = Pt(36)
+            run.font.size = Pt(28)
 
         # 標題
         from pptx.util import Pt
         title_box = slide.shapes.add_textbox(
-            Inches(x + 0.2), Inches(y + 1.0), Inches(w - 0.4), Inches(0.5)
+            Inches(x + 0.15), Inches(y + h * 0.45), Inches(w - 0.3), Inches(0.5)
         )
         tf = title_box.text_frame
         tf.word_wrap = True
@@ -158,7 +172,7 @@ class GridCardsBuilder(BaseBuilder):
         # 描述
         if desc:
             desc_box = slide.shapes.add_textbox(
-                Inches(x + 0.2), Inches(y + 1.5), Inches(w - 0.4), Inches(0.6)
+                Inches(x + 0.15), Inches(y + h * 0.7), Inches(w - 0.3), Inches(h * 0.28)
             )
             tf = desc_box.text_frame
             tf.word_wrap = True

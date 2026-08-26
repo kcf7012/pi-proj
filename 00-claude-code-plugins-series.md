@@ -39,7 +39,7 @@
 
 了解整體架構與各元件的角色
 
-## Claude Code 擴展元件：核心元件（上）
+## Claude Code 擴展元件：7 個核心元件
 
 從基礎規則到進階自動化，層層堆疊的擴展能力
 
@@ -59,10 +59,6 @@
 
 事件自動化 · 確定性觸發的腳本
 
-## Claude Code 擴展元件：核心元件（下）
-
-從連接外部到包裝分享的高階元件
-
 ### MCP
 
 外部服務 · 連接資料庫、API、瀏覽器
@@ -74,18 +70,6 @@
 ### Marketplaces
 
 商店目錄 · 多個 plugin 的集合 + 版本管理
-
-## 何時該用哪個元件？
-
-| 需求 | 推薦元件 | 原因 |
-| :--- | :--- | :--- |
-| 每次 session 都要遵守的規則 | CLAUDE.md | 自動載入 |
-| 重複使用的 SOP 或專業知識 | Skill | 隨時叫用 |
-| 需要上下文隔離的任務 | Subagent | 不污染主對話 |
-| 每次檔案編輯後自動跑 X | Hook | 確定性觸發 |
-| 連接外部資料庫 / API | MCP | 標準化介面 |
-| 想把上述組合成可發布的套件 | Plugin | 統一打包 |
-| 想分享給團隊 / 社群 | Marketplace | 版本管理 + 發布 |
 
 ## Part 2: 8 份系列文件導覽
 
@@ -369,6 +353,19 @@ Marketplace 是 plugin 的目錄，支援：
 | 05 | Subagents 自訂指南 | 想做進階自動化的人 |
 | 06 | Hooks 自動化指南 | 想做確定性自動化的人 |
 | 07 | 探索並安裝 Plugins | 一般使用者 |
+
+## 重點回顧
+
+7 個核心元件：CLAUDE.md、Skills、Subagents、Hooks、MCP、Plugins、Marketplaces
+8 份文件、6,682 行、272 KB — 涵蓋 Claude Code v2.1.x 完整功能
+學習路徑：新手（07→04→02）→ 進階（05→06→01）→ 專家（03 細讀）
+推薦起手：先裝官方 plugin（commit-commands）→ 寫第一個 skill → 包成 plugin
+設計原則：標準型 + 詳細型密度，每頁一個核心概念
+
+- 🎯 立刻：執行 /plugin，安裝 commit-commands 試試
+- 📚 30 分鐘：翻完 #04-skills.md 的目錄
+- 🛠 2 小時：跟著 #02-plugins.md 步驟建立第一個 plugin
+- 🚀 一週：完成學習路徑中的「實戰」項目
 
 ## 開始你的 Plugin 之旅 🚀
 
