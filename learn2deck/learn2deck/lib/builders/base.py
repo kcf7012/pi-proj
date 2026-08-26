@@ -187,10 +187,18 @@ def build_full_deck(
             # 章節分隔（同上）
             body = slide_content.body or {}
             from ..pptx_helpers import add_section_divider
+            # 從 title 移除「Part X:」prefix，因為 section_num 已經顯示
+            import re as _re
+            section_title = _re.sub(
+                r"^(Part\s+\d+|Chapter\s+\d+|Section\s+\d+)\s*[::]?\s*",
+                "",
+                slide_content.title,
+                flags=_re.IGNORECASE,
+            ).strip()
             add_section_divider(
                 prs,
                 section_num=body.get("section_num", ""),
-                section_title=slide_content.title,
+                section_title=section_title,
                 section_subtitle=body.get("section_subtitle", ""),
                 theme=theme,
             )

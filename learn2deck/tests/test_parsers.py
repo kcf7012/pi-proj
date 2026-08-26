@@ -493,7 +493,7 @@ class TestRealMarkdownFiles:
         return Path("/home/elan/pi-proj")
 
     @pytest.mark.parametrize("filename,expected_min,expected_max", [
-        ("00-claude-code-plugins-series.md", 5, 20),
+        ("00-claude-code-plugins-series.md", 25, 35),  # 30 slides（含 cover + 5 section + 24 content）
         ("01-plugin-marketplaces.md", 10, 30),
         ("02-plugins.md", 5, 20),
         ("03-plugins-reference.md", 5, 25),

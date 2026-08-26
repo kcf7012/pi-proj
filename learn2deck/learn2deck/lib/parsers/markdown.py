@@ -345,9 +345,15 @@ def _extract_slide_body(
         # 從標題抽取 "Part N"
         m = re.match(r"(Part\s+\d+|Chapter\s+\d+|Section\s+\d+)", title, re.IGNORECASE)
         section_num = m.group(1) if m else ""
+        # section_subtitle 從 body 第一段純文字抽（如果有）
+        section_subtitle = ""
+        if body:
+            first_para = extract_paragraph_text(body).split("\n")[0]
+            if first_para and len(first_para) <= 80:
+                section_subtitle = first_para
         return {
             "section_num": section_num,
-            "section_subtitle": "",  # 可以後續從 H3 抽
+            "section_subtitle": section_subtitle,
         }
 
     # TITLE_CONTENT（預設）
