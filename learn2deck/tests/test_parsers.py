@@ -499,7 +499,7 @@ class TestRealMarkdownFiles:
         ("03-plugins-reference.md", 40, 50),  # 45 slides（對齊舊版）
         ("04-skills.md", 15, 40),
         ("05-subagents.md", 25, 35),  # 30 slides（對齊舊版）
-        ("06-hooks.md", 10, 30),
+        ("06-hooks.md", 45, 55),  # 50 slides（對齊舊版）
         ("07-discover-plugins.md", 10, 30),
     ])
     def test_parses_real_files(self, md_dir, filename, expected_min, expected_max):
