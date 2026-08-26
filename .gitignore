@@ -54,3 +54,4 @@ Thumbs.db
 # 簡報產生過程的臨時檔
 _test.pptx
 *.bak.md
+learn2deck/.venv/

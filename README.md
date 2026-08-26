@@ -84,10 +84,49 @@ uv pip install --python .pptx-venv/bin/python python-pptx
 .pptx-venv/bin/python _make_07_discover_plugins.py
 ```
 
+### 使用 learn2deck（Markdown → PPTX）
+
+v1.0 新增 [`learn2deck`](./learn2deck/) 套件，可直接從 .md 自動產生 .pptx：
+
+```bash
+# 安裝套件（僅需一次）
+cd learn2deck
+uv pip install --python ../.pptx-venv/bin/python -e .
+
+# 從 .md 產生 .pptx
+.pptx-venv/bin/learn2deck build 00-claude-code-plugins-series.md \
+  -o /tmp/new_overview.pptx --validate
+
+# 驗證輸出
+.pptx-venv/bin/learn2deck validate /tmp/new_overview.pptx
+
+# 列出可用主題
+.pptx-venv/bin/learn2deck theme list
+```
+
+> **優點**：不用手刻 `_make_XX.py` 腳本，只要寫 .md 就能產出視覺一致的 .pptx。
+
 ### 修改與自訂
 
 - 改顏色：編輯 `_pptx_helpers.py` 頂部的 `COLOR_*` 變數
 - 改內容：編輯對應的 `_make_XX_*.py` 後重新執行
+- 用 learn2deck：直接修改 `.md` 後重新 `learn2deck build`
+
+## 📦 learn2deck 套件
+
+| 檔案 | slides | 對齊狀態 |
+|:-----|-------:|:---------|
+| 00-overview | 30 | ✅ 與舊版完全對齊 |
+| 01-plugin-marketplaces | 35 | ✅ 與舊版完全對齊 |
+| 02-plugins | 25 | ✅ 與舊版完全對齊 |
+| 03-plugins-reference | 45 | ✅ 與舊版完全對齊 |
+| 04-skills | 40 | ✅ 與舊版完全對齊 |
+| 05-subagents | 30 | ✅ 與舊版完全對齊 |
+| 06-hooks | 50 | ✅ 與舊版完全對齊 |
+| 07-discover-plugins | 22 | ✅ 與舊版完全對齊 |
+| **總計** | **277** | **✅ 277/277 對齊** |
+
+詳細說明見 [`learn2deck/README.md`](./learn2deck/README.md)
 
 ## 📖 內容來源
 
