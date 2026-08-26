@@ -302,8 +302,78 @@ More content
 """)
         deck = parse_markdown(md)
         assert deck.title == "Test Title"
-        assert len(deck.slides) == 2  # Section 1, Section 2
-        assert all(s.title in ("Section 1", "Section 2") for s in deck.slides)
+        # 3 slides: COVER (auto-inserted) + Section 1 + Section 2
+        assert len(deck.slides) == 3
+        assert deck.slides[0].type == SlideType.COVER
+        assert deck.slides[1].title == "Section 1"
+        assert deck.slides[2].title == "Section 2"
+
+    def test_objectives_section(self, tmp_path):
+        """「學習目標」標題應推斷為 objectives"""
+        md = tmp_path / "test.md"
+        md.write_text("""# Test
+
+## 本章你會學到
+
+- 🎯 **Concept**: Basic idea
+- 📦 **Tool**: How to use
+- 🧪 **Test**: Verify
+""")
+        deck = parse_markdown(md)
+        # slides[0] = COVER (auto), slides[1] = 本章你會學到
+        obj = deck.slides[1]
+        assert obj.type == SlideType.OBJECTIVES
+        assert "items" in obj.body
+        assert len(obj.body["items"]) >= 2
+
+    def test_auto_cover_inserted(self, tmp_path):
+        """沒 cover 時自動插入 COVER"""
+        md = tmp_path / "test.md"
+        md.write_text("""# My Title
+
+> My subtitle
+
+## First
+
+content
+""")
+        deck = parse_markdown(md)
+        assert deck.slides[0].type == SlideType.COVER
+        assert deck.slides[0].title == "My Title"
+        assert deck.slides[0].subtitle == "My subtitle"
+        assert deck.slides[1].title == "First"
+
+    def test_cover_tag_from_filename(self, tmp_path):
+        """從檔名推斷 cover tag（例如 00-xxx.md → 「#00 · xxx」）"""
+        md = tmp_path / "00-overview.md"
+        md.write_text("""# Overview
+
+## A
+
+content
+""")
+        deck = parse_markdown(md)
+        cover = deck.slides[0]
+        assert cover.type == SlideType.COVER
+        # tag 應該是「#0 · overview」（num 去前導 0）
+        assert "overview" in cover.body.get("tag", "")
+
+    def test_explicit_cover_not_duplicated(self, tmp_path):
+        """如果有 explicit cover，不該重複插入"""
+        md = tmp_path / "test.md"
+        md.write_text("""# Title
+
+## Slide: Cover
+
+some content
+
+## Section 1
+
+content
+""")
+        deck = parse_markdown(md)
+        cover_count = sum(1 for s in deck.slides if s.type == SlideType.COVER)
+        assert cover_count == 1
 
     def test_skip_toc_section(self, tmp_path):
         """目錄章節應被跳過"""
@@ -359,7 +429,8 @@ content
 | 1 | 2 |
 """)
         deck = parse_markdown(md)
-        comp = deck.slides[0]
+        # slides[0] = COVER (auto), slides[1] = Comparison
+        comp = deck.slides[1]
         assert comp.type == SlideType.TITLE_TABLE
         assert "headers" in comp.body
         assert "rows" in comp.body
@@ -378,26 +449,10 @@ print('!')
 ```
 """)
         deck = parse_markdown(md)
-        ex = deck.slides[0]
+        # slides[0] = COVER (auto), slides[1] = Example
+        ex = deck.slides[1]
         assert ex.type == SlideType.TITLE_CODE
         assert "print('hello')" in ex.body["code"]
-
-    def test_objectives_section(self, tmp_path):
-        """「學習目標」標題應推斷為 objectives"""
-        md = tmp_path / "test.md"
-        md.write_text("""# Test
-
-## 本章你會學到
-
-- 🎯 **Concept**: Basic idea
-- 📦 **Tool**: How to use
-- 🧪 **Test**: Verify
-""")
-        deck = parse_markdown(md)
-        obj = deck.slides[0]
-        assert obj.type == SlideType.OBJECTIVES
-        assert "items" in obj.body
-        assert len(obj.body["items"]) >= 2
 
     def test_with_frontmatter(self, tmp_path):
         """有 frontmatter 的 Markdown"""

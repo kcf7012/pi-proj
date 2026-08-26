@@ -80,10 +80,48 @@ def parse_markdown(source_path: str | Path) -> DeckSpec:
         pass
 
     slides = _parse_sections(body, deck.title)
+
+    # 5. 如果沒被 explicit cover 覆蓋，自動插入 COVER slide
+    has_cover = any(s.type == SlideType.COVER for s in slides)
+    if not has_cover:
+        # 抽取 tag：從 metadata 或檔名（例如 00-claude-code-plugins-series → 「系列總覽 · #00」）
+        tag = _extract_cover_tag(metadata, path)
+        cover_slide = SlideContent(
+            type=SlideType.COVER,
+            title=deck.title,
+            subtitle=deck.subtitle or "",
+            body={"tag": tag} if tag else {},
+        )
+        slides.insert(0, cover_slide)
+
     for slide in slides:
         deck.add_slide(slide)
 
     return deck
+
+
+def _extract_cover_tag(metadata: dict, path: Path) -> str:
+    """從 frontmatter 或檔名抽取 cover 的 tag
+
+    優先順序：
+    1. frontmatter.deck.tag
+    2. frontmatter.tag
+    3. 從檔名推斷（例如 00-overview → 「系列總覽 · #00」）
+    """
+    # 從 frontmatter.deck.tag 讀
+    deck_meta = metadata.get("deck", {})
+    if isinstance(deck_meta, dict) and deck_meta.get("tag"):
+        return deck_meta["tag"]
+    # 從 frontmatter.tag 讀
+    if metadata.get("tag"):
+        return metadata["tag"]
+    # 從檔名推斷：例如 00-claude-code-plugins-series.md → 「#00 · 系列總覽」
+    m = re.match(r"^(\d{2,})-(.+)$", path.stem)
+    if m:
+        num = m.group(1)  # 保留前導零（變成 #00, #01...）
+        topic = m.group(2)
+        return f"#{num} · {topic}"
+    return ""
 
 
 def _extract_deck_metadata(
