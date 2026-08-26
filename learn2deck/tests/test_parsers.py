@@ -494,7 +494,7 @@ class TestRealMarkdownFiles:
 
     @pytest.mark.parametrize("filename,expected_min,expected_max", [
         ("00-claude-code-plugins-series.md", 25, 35),  # 30 slides（含 cover + 5 section + 24 content）
-        ("01-plugin-marketplaces.md", 10, 30),
+        ("01-plugin-marketplaces.md", 30, 40),  # 35 slides（對齊舊版）
         ("02-plugins.md", 20, 30),  # 25 slides（對齊舊版 02-plugins.pptx）
         ("03-plugins-reference.md", 5, 25),
         ("04-skills.md", 15, 40),
