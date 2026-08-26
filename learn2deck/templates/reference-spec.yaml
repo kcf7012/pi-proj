@@ -1,0 +1,167 @@
+# learn2deck 技術規格型簡報範本
+#
+# 用途：技術規格、API/CLI 參考、欄位速查、命令清單
+# 結構：封面 → 規格總覽 → 欄位表 → 命令表 → 範例 → 注意事項 → 重點回顧
+# 使用：複製此檔，編輯後執行 learn2deck build
+#
+# 注意：YAML 解析尚未完整實作，建議把 slides 內容改成 .md 格式
+
+deck:
+  title: API 規格參考              # ← 改這裡
+  subtitle: 完整欄位與指令速查      # ← 改這裡
+  theme: claude-orange
+
+slides:
+  # === 封面 ===
+  - type: cover
+    title: API 規格參考            # ← 改這裡
+    subtitle: 完整欄位與指令速查    # ← 改這裡
+    body:
+      tag: "API Reference · v1.0"  # ← 改這裡
+
+  # === 學習目標（列出將涵蓋的內容） ===
+  - type: objectives
+    title: 本文件涵蓋              # 預設「本章你會學到」
+    body:
+      items:
+        - icon: "📋"
+          title: 規格總覽          # ← 改這裡
+          desc: 核心概念與術語
+        - icon: "🔧"
+          title: 完整 API
+          desc: 所有端點與欄位
+        - icon: "💡"
+          title: 使用範例
+          desc: 常見情境
+
+  # === 規格總覽（純文字段落）===
+  - type: title_content
+    title: 規格總覽                # ← 改這裡
+    body:
+      text: |
+        本文件定義 XXX API 的完整規格。
+        適用於 v1.0+ 版本，所有請求需透過 HTTPS，
+        回應採用 JSON 格式，UTF-8 編碼。
+
+  # === 欄位定義表 ===
+  - type: title_table
+    title: 必填欄位                 # ← 改這裡
+    subtitle: 所有請求必須包含       # ← 改這裡
+    body:
+      headers: ["欄位", "類型", "必填", "說明"]   # ← 改這裡
+      rows:
+        - ["id", "string", "是", "資源唯一識別碼"]
+        - ["name", "string", "是", "顯示名稱"]
+        - ["type", "enum", "否", "資源類型（預設 'default'）"]
+        - ["tags", "array", "否", "標籤清單"]
+
+  # === 選填欄位表 ===
+  - type: title_table
+    title: 選填欄位                 # ← 改這裡
+    body:
+      headers: ["欄位", "類型", "預設值", "說明"]   # ← 改這裡
+      rows:
+        - ["description", "string", "null", "資源描述"]
+        - ["metadata", "object", "{}", "自訂 metadata"]
+        - ["created_at", "datetime", "auto", "建立時間"]
+
+  # === 章節分隔（命令參考） ===
+  - type: section
+    title: Part 1: CLI 命令參考     # ← 改這裡
+    body:
+      section_num: "Part 1"
+      section_subtitle: 終端機指令  # ← 改這裡
+
+  # === 命令範例 1 ===
+  - type: title_code
+    title: 建立資源                 # ← 改這裡
+    subtitle: POST /resources       # ← 改這裡
+    body:
+      language: bash               # ← 改這裡
+      code: |
+        curl -X POST https://api.example.com/resources \
+          -H "Authorization: Bearer YOUR_TOKEN" \
+          -H "Content-Type: application/json" \
+          -d '{
+            "name": "my-resource",
+            "type": "default"
+          }'
+
+  # === 命令範例 2 ===
+  - type: title_code
+    title: 列出資源                 # ← 改這裡
+    body:
+      language: bash
+      code: |
+        curl https://api.example.com/resources?limit=10 \
+          -H "Authorization: Bearer YOUR_TOKEN"
+
+  # === 回應格式表 ===
+  - type: title_table
+    title: 回應格式                  # ← 改這裡
+    body:
+      headers: ["狀態碼", "意義", "範例"]
+      rows:
+        - ["200", "成功", "{'id': '...', 'name': '...'}"]
+        - ["400", "請求錯誤", "{'error': 'invalid_field'}"]
+        - ["401", "未授權", "{'error': 'unauthorized'}"]
+        - ["404", "找不到", "{'error': 'not_found'}"]
+        - ["500", "伺服器錯誤", "{'error': 'internal'}"]
+
+  # === 章節分隔（錯誤處理） ===
+  - type: section
+    title: Part 2: 錯誤處理          # ← 改這裡
+    body:
+      section_num: "Part 2"
+      section_subtitle: 常見錯誤碼
+
+  # === 錯誤處理（雙欄對比） ===
+  - type: two_column
+    title: 錯誤處理策略              # ← 改這裡
+    body:
+      left:
+        title: 可重試
+        color: "green"
+        items:
+          - "500 Internal Server Error"
+          - "503 Service Unavailable"
+          - "429 Too Many Requests"
+      right:
+        title: 不可重試
+        color: "red"
+        items:
+          - "400 Bad Request"
+          - "401 Unauthorized"
+          - "404 Not Found"
+
+  # === 注意事項（callout）===
+  - type: callout
+    title: 重要提醒
+    body:
+      text: "所有請求必須使用 HTTPS，HTTP 請求會被拒絕。"
+      icon: "🔒"
+      style: "warning"
+
+  # === 重點回顧 ===
+  - type: summary
+    title: 重點回顧                  # ← 改這裡
+    body:
+      key_points:
+        - 所有欄位定義見規格表
+        - 錯誤碼分為可重試與不可重試
+        - 使用 HTTPS 與 Bearer Token 認證
+      next_steps:
+        - 參考完整文件：https://docs.example.com
+        - 申請 API key：https://example.com/keys
+        - 測試環境：https://sandbox.example.com
+
+# === 自訂指南 ===
+#
+# 1. 複製此檔：cp reference-spec.yaml my-spec.yaml
+# 2. 編輯每個 slide（搜尋「← 改這裡」）
+# 3. 執行：learn2deck build my-spec.yaml -o my-spec.pptx --validate
+#
+# 提示：
+# - 表格是技術規格簡報的主力，多用 title_table
+# - code 區塊配合 language 標記可讀性更高
+# - 雙欄對比適合「可 vs 不可」「推薦 vs 不推薦」

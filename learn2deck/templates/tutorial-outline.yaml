@@ -1,0 +1,145 @@
+# learn2deck 教學型簡報範本
+#
+# 用途：分章節教學（如 Claude Code Plugin 系列、Python 教學）
+# 結構：封面 → 學習目標 → Part 1 章節 → 內容 → Part 2 章節 → 內容 → ... → 重點回顧
+# 使用：複製此檔，編輯 slides 區塊後執行
+#        learn2deck build tutorial-outline.yaml -o output.pptx
+#
+# 注意：YAML 解析尚未完整實作，建議把 slides 內容改成 .md 格式
+
+deck:
+  title: 教學主題                  # ← 改這裡
+  subtitle: 學習指南               # ← 改這裡
+  theme: claude-orange             # 主題（可改 minimal-bw）
+
+slides:
+  # === 封面 ===
+  - type: cover
+    title: 教學主題                # ← 改這裡
+    subtitle: 學習指南             # ← 改這裡
+    body:
+      tag: "教學 · #00"            # ← 改這裡
+
+  # === 學習目標 ===
+  - type: objectives
+    title: 本章你會學到            # 預設就是「本章你會學到」
+    body:
+      items:
+        - icon: "🎯"
+          title: 概念              # ← 改這裡
+          desc: 核心觀念           # ← 改這裡
+        - icon: "🛠"
+          title: 實作              # ← 改這裡
+          desc: 動手做             # ← 改這裡
+        - icon: "🧪"
+          title: 測試              # ← 改這裡
+          desc: 驗證成果           # ← 改這裡
+
+  # === Part 1 章節 ===
+  - type: section
+    title: Part 1: 基礎概念        # ← 改這裡
+    body:
+      section_num: "Part 1"
+      section_subtitle: 第一個章節  # ← 改這裡
+
+  # === 內容頁（bullet 列表） ===
+  - type: title_content
+    title: 內容標題                # ← 改這裡
+    subtitle: 補充說明              # ← 改這裡（可刪）
+    body:
+      items:
+        - 第一點                   # ← 改這裡
+        - 第二點
+        - 第三點
+        - 第四點
+
+  # === 內容頁（純文字段落）===
+  - type: title_content
+    title: 段落標題                # ← 改這裡
+    body:
+      text: |
+        這裡可以放較長的段落文字。
+        會自動換行，適合概念說明。
+
+  # === 內容頁（表格）===
+  - type: title_table
+    title: 比較表                  # ← 改這裡
+    subtitle: 兩種方式的差異        # ← 改這裡
+    body:
+      headers: ["面向", "方式 A", "方式 B"]   # ← 改這裡
+      rows:
+        - ["項目 1", "說明 A", "說明 B"]
+        - ["項目 2", "說明 A", "說明 B"]
+        - ["項目 3", "說明 A", "說明 B"]
+
+  # === 內容頁（程式碼）===
+  - type: title_code
+    title: 範例程式碼              # ← 改這裡
+    body:
+      language: python             # ← 改這裡
+      code: |
+        def hello():
+            print("Hello, world!")
+            return True
+
+  # === 內容頁（網格卡片）===
+  - type: grid_cards
+    title: 3 大重點                # ← 改這裡
+    body:
+      cols: 3                      # 欄數（預設 3，建議 3-4）
+      items:
+        - icon: "📚"
+          title: 重點 1            # ← 改這裡
+          desc: 簡短說明           # ← 改這裡
+        - icon: "🤖"
+          title: 重點 2
+          desc: 簡短說明
+        - icon: "🪝"
+          title: 重點 3
+          desc: 簡短說明
+
+  # === Part 2 章節 ===
+  - type: section
+    title: Part 2: 進階應用        # ← 改這裡
+    body:
+      section_num: "Part 2"
+      section_subtitle: 延伸主題   # ← 改這裡
+
+  # === 雙欄對比 ===
+  - type: two_column
+    title: 優缺點對比              # ← 改這裡
+    body:
+      left:
+        title: 優點
+        items: ["優點 1", "優點 2", "優點 3"]
+        color: "green"             # 配色
+      right:
+        title: 缺點
+        items: ["缺點 1", "缺點 2"]
+        color: "red"
+
+  # === 重點回顧 ===
+  - type: summary
+    title: 下一步                  # ← 改這裡
+    subtitle: 開始實作              # ← 改這裡
+    body:
+      key_points:
+        - 重點回顧 1               # ← 改這裡
+        - 重點回顧 2
+        - 重點回顧 3
+      next_steps:
+        - 下一步行動 1             # ← 改這裡
+        - 下一步行動 2
+
+# === 自訂指南 ===
+#
+# 1. 複製此檔：cp tutorial-outline.yaml my-tutorial.yaml
+# 2. 編輯每個 slide 的 title/body（搜尋「← 改這裡」）
+# 3. 執行：learn2deck build my-tutorial.yaml -o my-tutorial.pptx --validate
+# 4. 視覺確認
+#
+# 提示：
+# - 每張投影片的 items 數 ≤ 7（避免塞不下）
+# - 表格 row ≤ 7（避免降級字級）
+# - code 區塊 ≤ 15 行（避免自動降級到 8pt）
+# - 詳見 references/slide-types.md

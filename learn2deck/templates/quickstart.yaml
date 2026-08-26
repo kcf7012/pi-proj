@@ -1,0 +1,209 @@
+# learn2deck 快速入門型簡報範本
+#
+# 用途：5 分鐘上手教學、入門導引、3-5 步驟流程
+# 結構：封面 → 5 步驟卡片 → 每步驟詳解 → 完成總結
+# 使用：複製此檔，編輯後執行 learn2deck build
+#
+# 注意：YAML 解析尚未完整實作，建議把 slides 內容改成 .md 格式
+
+deck:
+  title: 5 分鐘學會 XXX              # ← 改這裡
+  subtitle: 快速入門指南              # ← 改這裡
+  theme: claude-orange
+
+slides:
+  # === 封面 ===
+  - type: cover
+    title: 5 分鐘學會 XXX            # ← 改這裡
+    subtitle: 快速入門指南           # ← 改這裡
+    body:
+      tag: "Quickstart · 5 min"     # ← 改這裡
+
+  # === 學習目標（簡短） ===
+  - type: objectives
+    title: 完成後你會                # 預設「本章你會學到」
+    body:
+      items:
+        - icon: "🚀"
+          title: 快速上手            # ← 改這裡
+          desc: 5 分鐘內完成
+        - icon: "💡"
+          title: 核心概念
+          desc: 理解運作原理
+        - icon: "🛠"
+          title: 動手實作
+          desc: 做出第一個成品
+
+  # === 5 步驟總覽（網格卡片） ===
+  - type: grid_cards
+    title: 5 個步驟                   # ← 改這裡
+    subtitle: 按順序執行               # ← 改這裡
+    body:
+      cols: 5                         # 5 個 step 用 5 欄
+      items:
+        - icon: "1️⃣"
+          title: 環境準備             # ← 改這裡
+          desc: 安裝依賴
+        - icon: "2️⃣"
+          title: 建立專案             # ← 改這裡
+          desc: 初始化
+        - icon: "3️⃣"
+          title: 設定                # ← 改這裡
+          desc: 配置參數
+        - icon: "4️⃣"
+          title: 執行                # ← 改這裡
+          desc: 跑起來
+        - icon: "5️⃣"
+          title: 部署                # ← 改這裡
+          desc: 上線
+
+  # === Step 1 詳解 ===
+  - type: title_content
+    title: 步驟 1: 環境準備           # ← 改這裡
+    subtitle: 安裝必要工具             # ← 改這裡
+    body:
+      items:
+        - 確認系統需求（Python 3.10+）
+        - 安裝套件：`pip install xxx`
+        - 驗證安裝：`xxx --version`
+
+  # === Step 1 程式碼 ===
+  - type: title_code
+    title: 安裝指令                   # ← 改這裡
+    body:
+      language: bash
+      code: |
+        # 安裝套件
+        pip install xxx
+
+        # 驗證
+        xxx --version
+
+  # === 章節分隔（步驟 2-3） ===
+  - type: section
+    title: Part 1: 建立與設定          # ← 改這裡
+    body:
+      section_num: "Part 1"
+      section_subtitle: 前置作業
+
+  # === Step 2 詳解 ===
+  - type: title_content
+    title: 步驟 2: 建立專案            # ← 改這裡
+    body:
+      items:
+        - 在工作目錄下執行初始化指令
+        - 選擇範本（minimal / standard）
+        - 編輯設定檔 `config.yaml`
+
+  # === Step 2 程式碼 ===
+  - type: title_code
+    title: 初始化專案                  # ← 改這裡
+    body:
+      language: bash
+      code: |
+        mkdir my-project
+        cd my-project
+        xxx init --template minimal
+
+  # === Step 3 詳解 ===
+  - type: title_content
+    title: 步驟 3: 設定                # ← 改這裡
+    body:
+      items:
+        - 設定 API key（環境變數）
+        - 選擇區域（us-east / eu-west）
+        - 設定 log 等級（debug / info）
+
+  # === Step 3 程式碼 ===
+  - type: title_code
+    title: 設定環境變數                # ← 改這裡
+    body:
+      language: bash
+      code: |
+        export XXX_API_KEY="your-key"
+        export XXX_REGION="us-east"
+        export XXX_LOG_LEVEL="info"
+
+  # === 章節分隔（步驟 4-5） ===
+  - type: section
+    title: Part 2: 執行與部署          # ← 改這裡
+    body:
+      section_num: "Part 2"
+      section_subtitle: 實際運行
+
+  # === Step 4 詳解 ===
+  - type: title_content
+    title: 步驟 4: 執行                # ← 改這裡
+    body:
+      items:
+        - 啟動本地服務
+        - 在瀏覽器開啟 http://localhost:8000
+        - 看到歡迎頁面代表成功
+
+  # === Step 4 程式碼 ===
+  - type: title_code
+    title: 啟動服務                    # ← 改這裡
+    body:
+      language: bash
+      code: |
+        # 開發模式（自動重載）
+        xxx dev
+
+        # 或生產模式
+        xxx start --port 8000
+
+  # === Step 5 詳解（雙欄：本地 vs 雲端） ===
+  - type: two_column
+    title: 步驟 5: 部署                # ← 改這裡
+    subtitle: 選擇部署方式
+    body:
+      left:
+        title: 本地部署
+        color: "blue"
+        items:
+          - "簡單快速"
+          - "適合測試"
+          - "指令：xxx deploy local"
+      right:
+        title: 雲端部署
+        color: "green"
+        items:
+          - "正式環境"
+          - "自動擴展"
+          - "指令：xxx deploy cloud"
+
+  # === 常見問題（callout） ===
+  - type: callout
+    title: 卡住了嗎？
+    body:
+      text: "如果遇到錯誤，執行 `xxx doctor` 檢查環境。"
+      icon: "💡"
+      style: "info"
+
+  # === 完成總結（summary） ===
+  - type: summary
+    title: 🎉 完成！                   # ← 改這裡
+    subtitle: 你已經學會 XXX            # ← 改這裡
+    body:
+      key_points:
+        - 環境準備：安裝套件
+        - 建立專案：xxx init
+        - 設定：環境變數與配置
+        - 執行：xxx dev
+        - 部署：xxx deploy
+      next_steps:
+        - 查看完整文件：https://docs.example.com
+        - 進階設定：https://docs.example.com/advanced
+        - 加入社群：https://discord.gg/example
+
+# === 自訂指南 ===
+#
+# 1. 複製此檔：cp quickstart.yaml my-quickstart.yaml
+# 2. 編輯每個 step 的內容（搜尋「← 改這裡」）
+# 3. 執行：learn2deck build my-quickstart.yaml -o output.pptx --validate
+#
+# 提示：
+# - 5 步驟最理想（太多會塞不下，太少不夠完整）
+# - 每步驟建議：標題 → 詳解（title_content）→ 程式碼（title_code）
+# - 章節分隔（section）可在 3 步驟處切一刀
+# - 完成頁用 summary + emoji 強調
