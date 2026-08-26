@@ -382,3 +382,601 @@ done
 1. **Phase 9 剩餘（使用者主導）**：用 LibreOffice 開新舊 8 份 .pptx 並排確認
 2. **Phase 9 bug 修正**：修正§0 列出的 4 個 builder / parser bug
 3. **Phase 10**：文檔 + examples + 發佈
+
+---
+
+# Phase 11：Skill 觸發語 + Agent 整合開發計劃書
+
+> **給下個 session 的完整開發計劃**
+> 建立日期：2026/08
+> 對應 commit：`e2be6d8` (Phase 10)
+> 對應 spec：`docs/learn2deck-spec.md` §2.3 + `docs/learn2deck-agent-supplement.md`
+
+---
+
+## 0. 目標
+
+把 v1.0.0 純 CLI 工具變成 **Claude skill（觸發語方式）**，並規劃 v1.1 Agent 整合路徑。
+
+| 階段 | 狀態 | 說明 |
+|:-----|:-----|:-----|
+| v1.0.0 純規則 | ✅ 已發佈 | CLI 工具 + 8 份 .md 對齊 |
+| **Phase 11 Skill 整合** | ⏳ 下個 session | SKILL.md + references + templates |
+| **v1.1 Agent 整合** | ⏳ 後續 session | LLM 增強功能（opt-in）|
+
+---
+
+## 1. 為什麼需要 Skill 整合？
+
+### 1.1 現狀（v1.0.0）
+
+使用者必須手動執行 CLI：
+
+```bash
+.pptx-venv/bin/learn2deck build input.md -o output.pptx
+.pptx-venv/bin/learn2deck validate output.pptx
+```
+
+這對**技術使用者**友善，但對**內容創作者**（只想把 .md 變成簡報）門檻高。
+
+### 1.2 目標（Phase 11）
+
+讓 Claude 透過**觸發語**自動執行：
+
+| 使用者輸入 | Claude 動作 |
+|:-----------|:------------|
+| 「幫我把 04-skills.md 做成簡報」 | 自動 build + validate |
+| 「從 markdown 產生 pptx」 | 自動 build + validate |
+| 「make a slide deck from this md」 | 自動 build + validate |
+| 「我要 8 份文件的簡報」 | 自動 build 全部 + 報告 |
+
+### 1.3 規範遵循
+
+依照 [Claude Code Skills 官方規範](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview)：
+
+```
+skill-name/
+├── SKILL.md           ← Claude 讀這個決定是否啟用
+├── references/        ← 設計系統參考文件
+├── scripts/           ← 可執行腳本（呼叫 CLI）
+├── templates/         ← 內容範本
+└── examples/          ← 使用範例
+```
+
+---
+
+## 2. 完整目錄結構（v1.1 目標）
+
+```
+learn2deck/
+├── SKILL.md                          ⭐ NEW: 觸發語定義
+├── references/                        ⭐ NEW: 設計系統參考
+│   ├── style-guide.md                ⭐ NEW: claude-orange 主題權威參考
+│   ├── slide-types.md                ⭐ NEW: 9 種版型速查
+│   ├── validation-rules.md           ⭐ NEW: R1-R5 規則詳解
+│   ├── troubleshooting.md            ⭐ NEW: 常見問題
+│   └── cli-reference.md              ⭐ NEW: 完整 CLI 指令
+├── templates/                         ⭐ NEW: 簡報大綱範本
+│   ├── tutorial-outline.yaml
+│   ├── reference-spec.yaml
+│   └── quickstart.yaml
+├── examples/                          ✅ 已有（Phase 10）
+│   └── minimal-plugin/
+├── learn2deck/                        ✅ 套件本體（v1.0）
+│   ├── __init__.py
+│   ├── cli.py
+│   └── lib/
+├── tests/                             ✅ 已有（233 tests）
+├── tools/                             ✅ 已有（Phase 9）
+├── HANDOFF.md                         ✅ 已有
+├── MD_RESTRUCTURING_GUIDE.md          ✅ 已有
+├── README.md                          ✅ 已有
+├── pyproject.toml                     ✅ 已有
+└── Makefile                           ✅ 已有
+```
+
+---
+
+## 3. SKILL.md 設計
+
+### 3.1 觸發策略（雙層觸發）
+
+依照 spec §「決策 1：SKILL.md 觸發描述」：
+
+**Layer 1 — 關鍵字觸發**（高信心度）
+
+| 關鍵字 | 範例 |
+|:------|:-----|
+| `產生簡報` | 「幫我產生簡報」 |
+| `md 轉 pptx` | 「把這個 md 轉 pptx」 |
+| `markdown 投影片` | 「從 markdown 做投影片」 |
+| `make slides` | 「make slides from this」 |
+| `pptx` | 「產生 .pptx」 |
+| `build deck` | 「build a deck」 |
+
+**Layer 2 — 意圖觸發**（中信心度）
+
+| 場景 | 範例 |
+|:-----|:-----|
+| 有 .md 檔 + 提到「簡報 / 投影片 / PPTX / deck / slides」 | 「把 README 變成簡報分享給團隊」 |
+| 有 .md 檔 + 提到「展示 / 分享 / 教學」 | 「想展示這份教學內容」 |
+| 提到現有檔名 + 期望輸出 | 「00-overview.md 做成 pptx」 |
+
+### 3.2 SKILL.md 範本
+
+```markdown
+---
+name: learn2deck
+description: 從 Markdown 教材與技術文件自動產生符合設計風格的 PPTX 簡報。Use this skill when the user asks to "產生簡報", "md 轉 pptx", "make slides from markdown", "build a deck", or mentions converting markdown content to PowerPoint/PPTX. Do NOT use for editing existing PPTX files or general presentation advice.
+---
+
+# learn2deck Skill
+
+從 Markdown 自動產生符合設計風格的 PPTX 簡報。
+
+## 觸發條件
+
+- 使用者說「產生簡報 / 做投影片 / build deck / make slides」
+- 有 .md 檔且想轉成 .pptx
+
+## 不要觸發
+
+- 編輯現有 .pptx（用戶端工具）
+- 一般簡報建議（不在 skill 範圍）
+
+## 執行流程
+
+1. **識別輸入檔**：找到 .md 檔（單一或多個）
+2. **確認輸出位置**：
+   - 預設：`/tmp/new_<basename>.pptx`
+   - 或使用者指定
+3. **執行 build**：
+   ```bash
+   learn2deck build <input.md> -o <output.pptx> --validate
+   ```
+4. **檢查驗證結果**：
+   - ✨ No issues found → 報告成功
+   - 有 Issues → 列出問題，問使用者是否繼續
+5. **報告結果**：
+   - slides 數
+   - 視覺驗證狀態
+   - 輸出檔位置
+
+## 範例
+
+### 單檔
+> 「幫我把 04-skills.md 做成簡報」
+→ 執行 `learn2deck build 04-skills.md -o /tmp/new_skills.pptx`
+
+### 多檔
+> 「我要 8 份文件的簡報」
+→ 對 00-07 全部執行 build
+
+### 帶驗證
+> 「產生簡報並驗證」
+→ 加上 `--validate` flag
+
+## 錯誤處理
+
+- CLI 失敗 → 報告錯誤訊息，建議檢查 .md 格式
+- 驗證有 Issues → 列出具體 issue，問使用者是否接受
+- .md 找不到 → 詢問檔案路徑
+
+## 相關文件
+
+- `references/style-guide.md` — 設計系統
+- `references/slide-types.md` — 9 種版型
+- `references/cli-reference.md` — 完整 CLI
+- `examples/minimal-plugin/` — 範例
+
+## 注意事項
+
+- v1.0 純規則版，不呼叫 LLM
+- 視覺風格為 claude-orange 主題
+- 8 份 .md 已驗證可正確解析（277/277 slides 對齊）
+```
+
+### 3.3 觸發語測試案例
+
+下個 session 必須測試：
+
+```bash
+# 在 pi-proj 目錄下，用 Claude Code 測試這些觸發語：
+
+"幫我把 04-skills.md 做成簡報"
+→ 預期：Claude 呼叫 learn2deck skill
+
+"從 markdown 產生 pptx"
+→ 預期：Claude 詢問哪個 .md
+
+"我要 8 份文件的簡報"
+→ 預期：Claude 對 00-07 全部 build
+
+"用 learn2deck build 00-overview.md"
+→ 預期：Claude 直接執行（明確指令）
+```
+
+---
+
+## 4. references/ 內容設計
+
+### 4.1 references/style-guide.md
+
+**目的**：設計系統權威參考（從 `_pptx_helpers.py` 提取）
+
+```markdown
+# Claude Orange 主題設計指南
+
+## 顏色
+| 名稱 | Hex | 用途 |
+|------|-----|------|
+| primary | #C75A1A | 橘色裝飾條 |
+| bg_cream | #FAF8F3 | 背景米白 |
+| dark | #2C2C2C | 主要文字 |
+| gray_text | #6B6B6B | 次要文字 |
+| bg_gray | #F3F0E9 | 卡片背景 |
+| white | #FFFFFF | 卡片文字 |
+
+## 字體
+- title: Calibri
+- body: Calibri
+- code: Consolas
+
+## 安全區
+- 頂部：1.3" 起
+- 底部：7.0" 止（容忍至 7.35"）
+- 左：0.5" 起
+- 右：12.833" 止
+
+## 裝飾
+- 頂部橘色條：0.15" 高 × 13.33" 寬
+- 底部品牌列：y=7.1"
+- 頁碼：右上角
+```
+
+### 4.2 references/slide-types.md
+
+**目的**：9 種版型速查
+
+```markdown
+# 9 種 Slide Type 速查
+
+| Type | 用途 | body schema |
+|------|------|-------------|
+| cover | 封面 | {tag: string} |
+| objectives | 學習目標 | {items: [...]} |
+| section | 章節分隔 | {section_num, section_subtitle} |
+| title_content | 標題+文字 | {items: [str]} 或 {text: str} |
+| title_table | 標題+表格 | {headers, rows} |
+| title_code | 標題+程式碼 | {code, language} |
+| two_column | 雙欄對比 | {left, right} |
+| grid_cards | 網格卡片 | {items: [{icon, title, desc}], cols?} |
+| summary | 重點回顧 | {key_points: [...]} |
+
+## Markdown 對應規則
+
+| Markdown | Slide Type |
+|----------|------------|
+| `## Part X: 標題` | section_divider |
+| `## 標題` + table | title_table |
+| `## 標題` + ```code``` | title_code |
+| `## 標題` + 3+ ### H3 | grid_cards |
+| `## 下一步` | summary |
+| 其他 | title_content（預設）|
+```
+
+### 4.3 references/validation-rules.md
+
+**目的**：R1-R5 規則詳解
+
+```markdown
+# 驗證規則詳解
+
+## R1: code 框容量（錯誤）
+- 規則：N 行 × 行高 ≤ 框高
+- 自動修正：加大高度或縮小字體
+
+## R2: 元素重疊（錯誤）
+- 規則：兩個非配對元素 bounding box 有交集
+- 自動修正：提示下移後者
+
+## R3: 品牌列安全（警告）
+- 規則：top + height > 7.0"
+- 自動修正：建議重新配置
+
+## R5: 檔案格式（錯誤）
+- 規則：產出檔案不是 Microsoft PowerPoint 2007+
+- 自動修正：阻止產出
+```
+
+### 4.4 references/cli-reference.md
+
+**目的**：完整 CLI 指令速查
+
+```markdown
+# CLI 完整參考
+
+## learn2deck build
+learn2deck build <input> -o <output> [--validate] [--theme <name>] [--quiet]
+
+## learn2deck validate
+learn2deck validate <input>
+
+## learn2deck theme list
+learn2deck theme list
+
+## learn2deck theme show <name>
+learn2deck theme show <name>
+
+## learn2deck init <dir>
+learn2deck init my-project
+
+## learn2deck version
+learn2deck version
+```
+
+### 4.5 references/troubleshooting.md
+
+**目的**：常見問題與解決方案
+
+```markdown
+# 疑難排解
+
+## Q: build 失敗 list index out of range
+A: Markdown table 的 column 數不一致。檢查 `|` 是否需要跳脫為 `\|`
+
+## Q: 表格塞不下
+A: 拆成多張 slide，或減少 row 數
+
+## Q: 重疊 warning (R2)
+A: grid_cards 的 desc 太長。縮短或加寬 col
+
+## Q: Markdown 沒被解析
+A: 檢查 H2 標題格式（## 開頭）
+```
+
+---
+
+## 5. templates/ 範本設計
+
+### 5.1 templates/tutorial-outline.yaml
+
+```yaml
+# 教學型簡報範本（適合分章節教學）
+deck:
+  title: 教學主題
+  subtitle: 學習指南
+  theme: claude-orange
+
+slides:
+  - type: cover
+    title: 教學主題
+    body: {tag: 教學 · #00}
+
+  - type: objectives
+    title: 本章你會學到
+    body:
+      items:
+        - {icon: 🎯, title: 概念, desc: 核心觀念}
+        - {icon: 🛠, title: 實作, desc: 動手做}
+
+  - type: section_divider
+    title: Part 1: 基礎
+    subtitle: 第一個章節
+
+  - type: title_content
+    title: 內容標題
+    body: {items: [bullet1, bullet2]}
+```
+
+### 5.2 templates/reference-spec.yaml
+
+```yaml
+# 技術規格型簡報範本（適合 API/CLI 參考）
+deck:
+  title: 技術規格
+  theme: claude-orange
+
+slides:
+  - type: cover
+    title: 規格文件
+    body: {tag: API Reference}
+
+  - type: title_table
+    title: 完整欄位速查
+    body:
+      headers: [欄位, 類型, 必填, 描述]
+      rows:
+        - [name, string, 是, 識別碼]
+
+  - type: title_code
+    title: 使用範例
+    body: {code: "...", language: bash}
+```
+
+### 5.3 templates/quickstart.yaml
+
+```yaml
+# 快速入門型簡報範本（適合 5 步驟教學）
+deck:
+  title: 快速入門
+  theme: claude-orange
+
+slides:
+  - type: cover
+    title: 5 分鐘學會 XXX
+
+  - type: grid_cards
+    title: 5 個步驟
+    body:
+      items:
+        - {icon: 1️⃣, title: 步驟一, desc: ...}
+        - {icon: 2️⃣, title: 步驟二, desc: ...}
+        ...
+```
+
+---
+
+## 6. 開發時程規劃
+
+### Session 1（Phase 11 — 純 Skill 整合，3-4 小時）
+
+| 工作項目 | 預估時間 |
+|:---------|:--------:|
+| 1.1 建立 SKILL.md | 1 小時 |
+| 1.2 建立 references/ 5 個檔案 | 1.5 小時 |
+| 1.3 建立 templates/ 3 個範本 | 0.5 小時 |
+| 1.4 測試觸發語（手動 + Claude Code）| 0.5 小時 |
+| 1.5 更新 HANDOFF + commit | 0.5 小時 |
+| **總計** | **4 小時** |
+
+### Session 2+（Phase 12 — Agent 整合，待評估）
+
+依照 `docs/learn2deck-agent-supplement.md`：
+
+| 工作項目 | 預估時間 |
+|:---------|:--------:|
+| 2.1 BaseLLMAgent 抽象介面 | 2 小時 |
+| 2.2 ClaudeAgent 實作 | 3 小時 |
+| 2.3 A1-A6 6 個 Agent 能力 | 6-8 小時 |
+| 2.4 --ai-assist CLI flag | 1 小時 |
+| 2.5 測試 + commit | 1 小時 |
+| **總計** | **~15 小時** |
+
+---
+
+## 7. 開發步驟（依序）
+
+### 步驟 1：建立 SKILL.md
+
+```bash
+cd /home/elan/pi-proj/learn2deck
+# 建立 SKILL.md（內容見 §3.2）
+vim SKILL.md
+```
+
+### 步驟 2：建立 references/
+
+```bash
+mkdir -p references
+# 建立 5 個 .md 檔案
+for f in style-guide slide-types validation-rules troubleshooting cli-reference; do
+  touch references/${f}.md
+done
+# 填入內容（§4）
+```
+
+### 步驟 3：建立 templates/
+
+```bash
+mkdir -p templates
+# 建立 3 個 YAML 範本
+touch templates/tutorial-outline.yaml
+touch templates/reference-spec.yaml
+touch templates/quickstart.yaml
+```
+
+### 步驟 4：測試觸發語
+
+```bash
+# 安裝到 ~/.claude/skills/learn2deck/
+ln -s /home/elan/pi-proj/learn2deck ~/.claude/skills/learn2deck
+
+# 用 Claude Code 測試：
+# 1. "幫我把 00-overview.md 做成簡報"
+# 2. "從 markdown 產生 pptx"
+# 3. "make slides from 04-skills.md"
+```
+
+### 步驟 5：更新文件並 commit
+
+```bash
+git add SKILL.md references/ templates/
+git commit -m "feat(learn2deck): Phase 11 - Claude skill integration
+
+- SKILL.md with double-layer trigger strategy
+- references/ with style-guide, slide-types, validation-rules,
+  troubleshooting, cli-reference
+- templates/ with 3 outline templates (tutorial, reference, quickstart)
+- 觸發語測試通過：[列測試案例]"
+```
+
+---
+
+## 8. 驗收標準
+
+### Phase 11 完成條件
+
+- [ ] SKILL.md 建立完成（觸發描述完整）
+- [ ] references/ 5 個檔案建立（每個至少 50 行）
+- [ ] templates/ 3 個 YAML 範本建立（每個至少 20 行）
+- [ ] 觸發語測試：3+ 個案例成功觸發 skill
+- [ ] 觸發語測試：1+ 個「不要觸發」案例正確排除
+- [ ] 233+ tests 仍然 pass
+- [ ] Commit + tag v1.1.0
+
+### 測試觸發語矩陣
+
+| 觸發語 | 預期行為 |
+|:-------|:---------|
+| 「幫我把 04-skills.md 做成簡報」 | ✅ 觸發 skill |
+| 「從 markdown 產生 pptx」 | ✅ 觸發 skill |
+| 「make slides from this md」 | ✅ 觸發 skill |
+| 「build a deck for 00-overview」 | ✅ 觸發 skill |
+| 「把這個 .pptx 改成橫式」 | ❌ 不觸發（編輯現有）|
+| 「幫我看一下這個 pptx」 | ❌ 不觸發（檢視）|
+
+---
+
+## 9. 風險與緩解
+
+### 風險 1：觸發語誤觸發
+
+**情境**：使用者說「這份 markdown 很好」也可能觸發。
+
+**緩解**：SKILL.md 的「Do NOT use for」明確排除。
+
+### 風險 2：CLI 路徑問題
+
+**情境**：skill 啟動時找不到 `learn2deck` 指令。
+
+**緩解**：SKILL.md 註明需要 `.pptx-venv/bin/learn2deck` 路徑，或全域安裝。
+
+### 風險 3：多檔觸發時效能
+
+**情境**：使用者說「8 份都做」，8 次 build 會花時間。
+
+**緩解**：skill 內提示「將花費 ~5 分鐘」，並用平行 build（background task）。
+
+---
+
+## 10. 給下個 session 的入口
+
+### 最優先要做的 3 件事
+
+1. **建立 SKILL.md**（內容見 §3.2）— 直接 vim / write 即可
+2. **建立 references/ 5 個檔案** — 內容見 §4
+3. **測試觸發語** — 用 Claude Code 實測
+
+### 完成後
+
+- 更新本 HANDOFF.md 標記 Phase 11 完成
+- Commit + tag v1.1.0
+- 進入 Phase 12（Agent 整合）
+
+---
+
+## 11. v1.0.0 完成總結（背景）
+
+v1.0.0 純規則版已於 `b5f5cd2` commit 達成：
+
+- ✅ 233 tests pass
+- ✅ 8 份 .pptx 對齊舊版（277/277 slides）
+- ✅ CLI 4 個指令（build/validate/theme/init）
+- ✅ Tag v1.0.0 + merged to main
+
+Phase 11 是**讓使用者用觸發語呼叫 v1.0.0**，而不是取代或擴充它。
+
+---
+
+**Handoff 結束。下一個任務接手者請從「Phase 11: Skill 觸發語整合」開始（見本文件 §3-§7）。**
