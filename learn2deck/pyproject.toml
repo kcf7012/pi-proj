@@ -55,6 +55,24 @@ include = ["learn2deck*"]
 [tool.setuptools.package-data]
 "learn2deck.lib.themes" = ["*.yaml"]
 
+[tool.setuptools.data-files]
+# 將 SKILL.md、references/、templates/ 與 examples/ 一起打包進 wheel
+# 這些檔案隨套件發佈，使用者可複製到 ~/.claude/skills/learn2deck/
+"share/learn2deck/skill" = [
+    "SKILL.md",
+]
+"share/learn2deck/skill/references" = [
+    "references/*.md",
+]
+"share/learn2deck/skill/templates" = [
+    "templates/*.yaml",
+]
+"share/learn2deck/skill/examples/minimal-plugin" = [
+    "examples/minimal-plugin/README.md",
+    "examples/minimal-plugin/content.md",
+    "examples/minimal-plugin/outline.yaml",
+]
+
 [tool.ruff]
 line-length = 100
 target-version = "py311"

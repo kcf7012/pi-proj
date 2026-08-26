@@ -1,6 +1,6 @@
 # Claude Orange 主題設計指南
 
-> **權威來源**：`_pptx_helpers.py` + `learn2deck/lib/themes/claude-orange.yaml`
+> **權威來源**：`learn2deck/lib/themes/claude-orange.yaml` + `learn2deck/lib/pptx_helpers/`
 > **用途**：當需要客製化版面、新增版型、或調整視覺風格時參考
 
 ## 1. 設計哲學
@@ -208,7 +208,7 @@ font_sizes:
 
 ## 8. 參考資源
 
-- 完整 helper API：`/home/elan/pi-proj/_pptx_helpers.py`
 - 主題 YAML：`learn2deck/lib/themes/claude-orange.yaml`
 - 主題載入：`learn2deck/lib/core/theme.py`
-- 規格書：`docs/learn2deck-spec.md` §6
+- 設計系統實作：`learn2deck/lib/pptx_helpers/`（layout.py / shapes.py / pages.py）
+- 規格書：`docs/learn2deck-spec.md`（隨套件原始碼附帶）

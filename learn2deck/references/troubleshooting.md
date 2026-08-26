@@ -176,28 +176,35 @@ def func3(): pass
 bash: learn2deck: command not found
 ```
 
-**原因**：`.pptx-venv/bin/` 不在 PATH 中。
+**原因**：套件未安裝，或安裝後指令不在 PATH 中。
 
 **解決**：
 
 ```bash
-# 方案 A：用絕對路徑
-/home/elan/pi-proj/.pptx-venv/bin/learn2deck build input.md -o output.pptx
+# 方案 A：安裝套件（推薦）
+pip install learn2deck
 
-# 方案 B：暫時啟用 venv
-source /home/elan/pi-proj/.pptx-venv/bin/activate
+# 方案 B：用 python -m 形式（不需指令在 PATH）
+python -m learn2deck build input.md -o output.pptx
+
+# 方案 C：暫時啟用 venv（若有使用 venv）
+source .venv/bin/activate    # 或 source venv/bin/activate
 learn2deck build input.md -o output.pptx
 
-# 方案 C：加進 PATH（永久）
-echo 'export PATH="/home/elan/pi-proj/.pptx-venv/bin:$PATH"' >> ~/.bashrc
-source ~/.bashrc
+# 方案 D：加進 PATH（永久）
+# 先確認安裝路徑
+pip show learn2deck | grep Location
+# 將 <Location>/scripts 加進 PATH（Windows）或 PATH（Unix）
+export PATH="$HOME/.local/bin:$PATH"   # 常見路徑
 ```
 
 **驗證**：
 
 ```bash
 which learn2deck
-# 應輸出：/home/elan/pi-proj/.pptx-venv/bin/learn2deck
+# 或
+pip show learn2deck
+# 應顯示套件資訊
 ```
 
 ---
@@ -391,15 +398,16 @@ learn2deck build input.md -o output.pptx --theme my-theme
 
 ---
 
-## Q15: 怎麼把 8 份 .md 一次轉成 8 份 PPTX？
+## Q15: 怎麼把多份 .md 一次轉成多份 PPTX？
 
 ```bash
-cd /home/elan/pi-proj/learn2deck
+# 假設當前目錄有多份 0?-*.md 檔案
+cd /path/to/your/markdown/dir
 
-for md in ../0?-*.md; do
+for md in 0?-*.md; do
   base=$(basename "$md" .md)
   echo "🔄 處理 $base..."
-  /home/elan/pi-proj/.pptx-venv/bin/learn2deck build "$md" \
+  learn2deck build "$md" \
     -o "/tmp/new_${base}.pptx" --validate -q
 done
 
@@ -411,12 +419,12 @@ echo "✅ 全部完成，新檔位於 /tmp/new_*.pptx"
 ## 還有問題？
 
 1. 查 `references/` 5 個檔案
-2. 跑 `python tools/layout_check.py /tmp/new_*.pptx`
-3. 看 HANDOFF.md §6 待確認事項
+2. 跑 `learn2deck validate output.pptx --rules R1,R2,R3` 做完整驗證
+3. 看套件隨附的 `README.md` 取得入門資訊
 4. 開 issue：https://github.com/kcf7012/pi-proj/issues
 
 ## 參考資源
 
-- HANDOFF.md §6：已知待確認事項
-- tools/：視覺驗證工具集
-- examples/minimal-plugin/：完整範例
+- `README.md`：入門指南
+- `examples/minimal-plugin/`：完整範例（Markdown 與 outline.yaml）
+- `references/`：5 個設計與驗證參考文件
