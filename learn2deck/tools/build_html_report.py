@@ -147,7 +147,7 @@ def build_html(old_groups: dict, new_groups: dict) -> str:
             html.append('<span class="label">OLD</span>')
             if i < len(old_pngs):
                 png_name = old_pngs[i].name
-                html.append(f'<img src="{OLD_DIR.name}/{png_name}" '
+                html.append(f'<img src="file://{OLD_DIR}/{png_name}" '
                             f'alt="OLD slide {i+1}">')
             else:
                 html.append('<div class="missing">（無對應 OLD slide）</div>')
@@ -158,7 +158,7 @@ def build_html(old_groups: dict, new_groups: dict) -> str:
             html.append('<span class="label">NEW (learn2deck)</span>')
             if i < len(new_pngs):
                 png_name = new_pngs[i].name
-                html.append(f'<img src="{NEW_DIR.name}/{png_name}" '
+                html.append(f'<img src="file://{NEW_DIR}/{png_name}" '
                             f'alt="NEW slide {i+1}">')
             else:
                 html.append('<div class="missing">（無對應 NEW slide）</div>')

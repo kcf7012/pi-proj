@@ -20,7 +20,7 @@ OLD_OUT="/tmp/old_png"
 NEW_OUT="/tmp/new_png"
 PDF_TMP="/tmp/_pdf_tmp"
 
-mkdir -p "$OLD_OUT" "$NEW_OUT" "$PDF_TMP"
+mkdir -p "$OLD_OUT" "$NEW_OUT" "$PDF_TMP/old" "$PDF_TMP/new"
 
 # 8 對檔案（OLD 檔名, NEW 檔名）
 pairs=(
@@ -79,9 +79,9 @@ for pair in "${pairs[@]}"; do
     if [[ -f "$OLD_DIR/$old" ]]; then
         echo "→ OLD: $old"
         libreoffice --headless --convert-to pdf \
-            --outdir "$PDF_TMP/old" "$OLD_DIR/$old" > /dev/null 2>&1
-        pdftoppm -png -r 100 "$PDF_TMP/old/$old" \
-            "$OLD_OUT/${old_base}_pptx_slide" > /dev/null 2>&1
+            --outdir "$PDF_TMP/old" "$OLD_DIR/$old" 2>&1 | tail -1
+        pdftoppm -png -r 100 "$PDF_TMP/old/${old%.pptx}.pdf" \
+            "$OLD_OUT/${old_base}_pptx_slide" 2>&1 | tail -1
     else
         echo "⚠ 找不到 OLD: $OLD_DIR/$old"
     fi
@@ -90,9 +90,9 @@ for pair in "${pairs[@]}"; do
     if [[ -f "$NEW_DIR/$new" ]]; then
         echo "→ NEW: $new"
         libreoffice --headless --convert-to pdf \
-            --outdir "$PDF_TMP/new" "$NEW_DIR/$new" > /dev/null 2>&1
-        pdftoppm -png -r 100 "$PDF_TMP/new/$new" \
-            "$NEW_OUT/${new_base}_pptx_slide" > /dev/null 2>&1
+            --outdir "$PDF_TMP/new" "$NEW_DIR/$new" 2>&1 | tail -1
+        pdftoppm -png -r 100 "$PDF_TMP/new/${new%.pptx}.pdf" \
+            "$NEW_OUT/${new_base}_pptx_slide" 2>&1 | tail -1
     else
         echo "⚠ 找不到 NEW: $NEW_DIR/$new"
     fi
