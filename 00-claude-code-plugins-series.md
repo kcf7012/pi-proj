@@ -1,4 +1,4 @@
-# Claude Code Plugin 完整學習系列
+# Claude Code Plugin 學習系列
 
 > 一套系統化的 Claude Code 擴展開發教材，由官方文件整理而成。
 > 共 8 份文件，涵蓋從新手到專家的完整學習路徑。
@@ -39,7 +39,7 @@
 
 了解整體架構與各元件的角色
 
-## Claude Code 擴展元件：7 個核心元件
+## Claude Code 擴展生態系：7 個核心元件
 
 從基礎規則到進階自動化，層層堆疊的擴展能力
 
@@ -70,6 +70,22 @@
 ### Marketplaces
 
 商店目錄 · 多個 plugin 的集合 + 版本管理
+
+## 何時該用哪個元件？
+
+依需求選擇最合適的擴展元件
+
+| 需求 | 推薦元件 | 原因 |
+| :--- | :--- | :--- |
+| 每次 session 都要遵守的規則 | CLAUDE.md | 自動載入，零成本 |
+| 重複使用的 SOP 或專業知識 | Skill | 隨時叫用，可重複 |
+| 需要上下文隔離的任務 | Subagent | 不污染主對話 |
+| 每次檔案編輯後自動跑 X | Hook | 確定性觸發 |
+| 連接外部資料庫 / API | MCP | 標準化介面 |
+| 想把上述組合成可發布的套件 | Plugin | 統一打包 |
+| 想分享給團隊 / 社群 | Marketplace | 版本管理 + 發布 |
+
+> 💡 元件之間可以組合：例如 Plugin 可以包含 Skills + Subagents + Hooks + MCP servers
 
 ## Part 2: 8 份系列文件導覽
 
@@ -341,19 +357,6 @@ Marketplace 是 plugin 的目錄，支援：
 
 > 💡 從一開始就避免這些陷阱，省下未來重構成本
 
-## 📊 本簡報系列總覽
-
-| 編號 | 主題 | 適合誰 |
-| :---: | :--- | :--- |
-| 00 | 系列總覽（這份） | 所有人 |
-| 01 | Plugin Marketplaces | 想分享 plugin 的人 |
-| 02 | Plugin 開發指南 | plugin 開發新手 |
-| 03 | Plugin 技術參考 | 進階開發者 |
-| 04 | Skills 完整指南 | 想自訂 Claude 行為的人 |
-| 05 | Subagents 自訂指南 | 想做進階自動化的人 |
-| 06 | Hooks 自動化指南 | 想做確定性自動化的人 |
-| 07 | 探索並安裝 Plugins | 一般使用者 |
-
 ## 重點回顧
 
 7 個核心元件：CLAUDE.md、Skills、Subagents、Hooks、MCP、Plugins、Marketplaces
@@ -367,15 +370,21 @@ Marketplace 是 plugin 的目錄，支援：
 - 🛠 2 小時：跟著 #02-plugins.md 步驟建立第一個 plugin
 - 🚀 一週：完成學習路徑中的「實戰」項目
 
+## 📊 本簡報系列總覽
+
+| 編號 | 主題 | 適合誰 |
+| :---: | :--- | :--- |
+| 00 | 系列總覽（這份） | 所有人 |
+| 01 | Plugin Marketplaces | 想分享 plugin 的人 |
+| 02 | Plugin 開發指南 | plugin 開發新手 |
+| 03 | Plugin 技術參考 | 進階開發者 |
+| 04 | Skills 完整指南 | 想自訂 Claude 行為的人 |
+| 05 | Subagents 自訂指南 | 想做進階自動化的人 |
+| 06 | Hooks 自動化指南 | 想做確定性自動化的人 |
+| 07 | 探索並安裝 Plugins | 一般使用者 |
+
 ## 開始你的 Plugin 之旅 🚀
 
 從 [02-plugins](./02-plugins.md) 開始，建立你的第一個 plugin
 
 建立日期：2026/01 | 整理自官方文件 · 繁體中文教學用途
-
-## 📜 授權與來源
-
-- **內容來源**：所有內容整理自 [code.claude.com/docs](https://code.claude.com/docs)
-- **授權方式**：整理自官方文件，繁體中文教學用途
-- **建立日期**：2026/01
-- **對應 Claude Code 版本**：v2.1.x（到 v2.1.236）
