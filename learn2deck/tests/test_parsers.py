@@ -498,7 +498,7 @@ class TestRealMarkdownFiles:
         ("02-plugins.md", 20, 30),  # 25 slides（對齊舊版 02-plugins.pptx）
         ("03-plugins-reference.md", 40, 50),  # 45 slides（對齊舊版）
         ("04-skills.md", 15, 40),
-        ("05-subagents.md", 8, 25),
+        ("05-subagents.md", 25, 35),  # 30 slides（對齊舊版）
         ("06-hooks.md", 10, 30),
         ("07-discover-plugins.md", 10, 30),
     ])
