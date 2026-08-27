@@ -8,7 +8,7 @@
 | 規則 | 名稱 | 嚴重度 | 說明 |
 |:-----|:-----|:-------|:-----|
 | R1 | Code 框容量 | **ERROR** | code 框裝不下內容時報錯 |
-| R2 | 元素重疊 | **WARNING** | 兩個元素 bounding box 重疊（pi-proj 有設計性重疊，故為 warning） |
+| R2 | 元素重疊 | **WARNING** | 兩個元素 bounding box 重疊（教學範本常有設計性重疊，故為 warning） |
 | R3 | 品牌列安全 | **WARNING** | 內容超出 y=7.0" 安全區 |
 | R5 | 檔案格式 | **ERROR** | 產出檔案不是有效的 PPTX |
 
@@ -74,7 +74,7 @@ N 行 × 行高(font_size) + 0.2" margin ≤ 框高
 
 ### 為什麼是 WARNING 而非 ERROR
 
-pi-proj 原始 PPTX 有許多「設計性重疊」：
+教學型簡報常見「設計性重疊」：
 - 箭頭指向 callout 框
 - 圖示壓在卡片邊緣
 - 標記重疊在內容上

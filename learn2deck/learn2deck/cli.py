@@ -539,6 +539,75 @@ learn2deck theme new my-theme --base claude-orange
     console.print(f"[cyan]下一步：[/cyan]learn2deck build {content_path} -o {directory}/output.pptx")
 
 
+# === skill ===
+
+skill_app = typer.Typer(help="管理 Claude Skill 安裝", no_args_is_help=True)
+app.add_typer(skill_app, name="skill")
+
+
+@skill_app.command("install")
+def skill_install(
+    target: Optional[Path] = typer.Option(
+        None,
+        "--target", "-t",
+        help="安裝目標目錄（預設 ~/.claude/skills/learn2deck）",
+    ),
+    force: bool = typer.Option(
+        False,
+        "--force", "-f",
+        help="覆蓋現有安裝",
+    ),
+):
+    """把 learn2deck SKILL 安裝到 Claude skills 目錄
+
+    安裝位置預設為 ~/.claude/skills/learn2deck/
+    安裝後 Claude Code 即可透過觸發語使用本 skill。
+
+    範例：
+
+        learn2deck skill install
+
+        learn2deck skill install --target ~/my-skills/learn2deck
+
+        learn2deck skill install --force
+    """
+    from .lib.skill import install_skill
+
+    try:
+        install_path = install_skill(target=target, force=force)
+    except FileNotFoundError as e:
+        error_console.print(f"[red]❌ {e}[/red]")
+        raise typer.Exit(1)
+    except FileExistsError as e:
+        error_console.print(f"[red]❌ {e}[/red]")
+        raise typer.Exit(1)
+
+    console.print(f"[bold green]✅ SKILL 已安裝：{install_path}[/bold green]")
+    console.print()
+    console.print("[cyan]使用方式[/cyan]")
+    console.print("   在 Claude Code 中輸入觸發語，例如：")
+    console.print('   • "幫我把 04-skills.md 做成簡報"')
+    console.print('   • "從 markdown 產生 pptx"')
+    console.print('   • "build a deck from this md"')
+    console.print()
+    console.print(f"   [dim]如需移除：rm -rf {install_path}[/dim]")
+
+
+@skill_app.command("path")
+def skill_path():
+    """顯示 SKILL 檔案的安裝位置（隨套件發佈）"""
+    from .lib.skill import find_skill_dir
+
+    skill_dir = find_skill_dir()
+    if skill_dir is None:
+        error_console.print("[red]❌ 找不到 SKILL 檔案[/red]")
+        raise typer.Exit(1)
+
+    skill_md = skill_dir / "SKILL.md"
+    console.print(f"[bold cyan]📂 SKILL 檔案位置[/bold cyan]")
+    console.print(f"   {skill_md}")
+
+
 # === main callback ===
 
 @app.callback()

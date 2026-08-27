@@ -292,14 +292,29 @@ learn2deck --version
 
 ## 6. 環境變數
 
-目前無強制環境變數，但若 `.pptx-venv/bin/` 不在 PATH 中：
+目前無強制環境變數。若 `learn2deck` 指令不在 PATH 中：
 
 ```bash
 # 確認指令可用
 which learn2deck
 
-# 若不可用，用絕對路徑
-/home/elan/pi-proj/.pptx-venv/bin/learn2deck --version
+# 若不可用，改用 python -m 形式
+python -m learn2deck build input.md -o output.pptx
+
+# 或確認套件已安裝
+pip show learn2deck
+```
+
+### 安裝
+
+```bash
+# 正式版（從 PyPI，推薦一般使用者）
+pip install learn2deck
+
+# 開發版（從原始碼，需先取得套件原始碼）
+git clone https://github.com/kcf7012/pi-proj.git
+cd pi-proj/learn2deck
+pip install -e .
 ```
 
 ## 7. 常用工作流

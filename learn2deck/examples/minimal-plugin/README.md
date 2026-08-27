@@ -14,8 +14,12 @@ minimal-plugin/
 ## 產生 PPTX
 
 ```bash
-cd /path/to/pi-proj
-.pptx-venv/bin/learn2deck build examples/minimal-plugin/content.md \
+# 在 learn2deck 套件根目錄下
+learn2deck build examples/minimal-plugin/content.md \
+  -o examples/minimal-plugin/output.pptx --validate
+
+# 或用 python -m 形式（不需安裝到 PATH）
+python -m learn2deck build examples/minimal-plugin/content.md \
   -o examples/minimal-plugin/output.pptx --validate
 ```
 

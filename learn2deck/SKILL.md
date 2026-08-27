@@ -47,7 +47,7 @@ description: 從 Markdown 教材與技術文件自動產生符合設計風格的
 learn2deck build <input.md> -o <output.pptx> --validate
 ```
 
-> **路徑提醒**：如果系統找不到 `learn2deck` 指令，使用 `/home/elan/pi-proj/.pptx-venv/bin/learn2deck` 絕對路徑。
+> **路徑提醒**：如果系統找不到 `learn2deck` 指令，使用 `python -m learn2deck build ...` 或確認套件已正確安裝（見 troubleshooting Q6）。
 
 ### 4. 檢查驗證結果
 
@@ -115,7 +115,7 @@ learn2deck build 04-skills.md -o /tmp/new_skills.pptx --validate
 | CLI 失敗（例外訊息） | 報告完整錯誤訊息，建議檢查 .md 格式（見 `references/troubleshooting.md`） |
 | 驗證有 Issues | 列出具體 issue + 位置（slide # / shape name），問使用者是否接受 |
 | .md 找不到 | 詢問檔案路徑，或建議 `ls *.md` 看現有檔案 |
-| 指令找不到 | 提示使用絕對路徑 `/home/elan/pi-proj/.pptx-venv/bin/learn2deck` |
+| 指令找不到 | 提示使用 `python -m learn2deck ...` 或檢查 `pip show learn2deck` |
 | 多檔但其中一個失敗 | 繼續處理其他檔案，最後彙整失敗清單 |
 
 ## 相關文件（references/）
@@ -139,14 +139,7 @@ learn2deck build 04-skills.md -o /tmp/new_skills.pptx --validate
 ## 重要注意事項
 
 - ⚡ **v1.0 純規則版**：本 skill 不呼叫任何 LLM，所有轉換由本地 CLI 完成
-- 🎨 **預設主題**：claude-orange（與 pi-proj 設計系統 100% 一致）
-- 📊 **已驗證**：8 份 .md（277/277 slides）對齊 pi-proj 現有 PPTX
+- 🎨 **預設主題**：claude-orange（與 Claude Code 設計風格一致）
+- 📊 **已驗證**：可在多份 .md 上產生對齊設計風格的 PPTX 簡報
 - 🚫 **不做**：編輯既有 PPTX、即時協作、雲端同步、動畫/影片
-- 💡 **CLI 路徑**：預設從 PATH 找 `learn2deck`；找不到時使用 `.pptx-venv/bin/learn2deck`
-
-## 開發資訊
-
-- 套件：`learn2deck` v1.0.0
-- 規格：`docs/learn2deck-spec.md` §9.4
-- 來源：`/home/elan/pi-proj/learn2deck/`
-- 環境：`/home/elan/pi-proj/.pptx-venv/`
+- 💡 **CLI 安裝**：`pip install learn2deck` 後即可使用 `learn2deck` 指令
