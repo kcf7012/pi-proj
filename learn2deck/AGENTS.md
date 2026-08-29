@@ -370,7 +370,211 @@ git checkout -b feat/<name> <commit-sha>
 
 ---
 
-## 7. 參考資源
+## 7. 發佈到 PyPI
+
+本套件發佈到 PyPI 時的完整流程，包含首次發佈設定與後續更新。
+
+### 8.1 首次發佈設定（一次性）
+
+#### 步驟 A：註冊 PyPI 帳號
+
+1. 前往 https://pypi.org/account/register/
+2. 填寫帳號資訊、驗證 email
+3. **啟用 2FA**（強烈建議，PyPI 官方要求）
+4. 等待審核通過（首次註冊可能有手動審核期）
+
+#### 步驟 B：產生 API Token
+
+1. 前往 https://pypi.org/manage/account/token/
+2. 點「Add API token」
+3. Token name: `github-actions-learn2deck`
+4. Scope:
+   - 首次發佈：**Entire account**（必須，因為專案還不存在）
+   - 後續更新：**Project: learn2deck**（更安全，只限本專案）
+5. 點「Add token」，**複製 token**（格式 `pypi-AgEIcHlwaS5vcmc...`，只顯示一次）
+
+#### 步驟 C：設定 GitHub Secret
+
+1. 前往 GitHub repo：https://github.com/kcf7012/pi-proj/settings/secrets/actions
+2. 點「New repository secret」
+3. Name: `PYPI_API_TOKEN`
+4. Value: 貼上步驟 B 複製的 token
+5. 點「Add secret」
+
+#### 步驟 D（選用）：設定 TestPyPI
+
+練習上傳流程可用 TestPyPI（測試環境），避免污染正式 PyPI：
+
+1. 註冊：https://test.pypi.org/account/register/
+2. 產生 token：https://test.pypi.org/manage/account/token/
+3. GitHub Secret 名稱：`PYPI_TEST_API_TOKEN`
+
+### 8.2 發佈新版本（每次更新）
+
+#### 步驟 1：更新版本號
+
+```bash
+# 編輯 pyproject.toml
+[project]
+name = "learn2deck"
+version = "0.2.0"   # ← 改成新版本（遵守 semver）
+```
+
+#### 步驟 2：在分支上更新 CHANGELOG（選用但推薦）
+
+```bash
+git checkout -b release/v0.2.0
+# 編輯 CHANGELOG.md 或 HANDOFF.md
+git add .
+git commit -m "docs(learn2deck): prepare v0.2.0 release notes"
+git push -u origin release/v0.2.0
+```
+
+#### 步驟 3：合併到 main 並推送
+
+```bash
+# 走 PR 或直接合併（取決於團隊流程）
+git checkout main
+git merge --no-ff release/v0.2.0
+git push origin main
+```
+
+#### 步驟 4：建立並推送 tag
+
+```bash
+# tag 必須與 pyproject.toml 的 version 一致
+git tag v0.2.0
+git push origin v0.2.0
+```
+
+#### 步驟 5：CI 自動跑發佈
+
+`.github/workflows/publish.yml` 會自動觸發：
+
+1. **Build job**：
+   - Checkout code
+   - Setup Python 3.11
+   - `pip install -e .[dev]`
+   - `pytest tests/`（**測試失敗就不上傳**）
+   - `python -m build`（產 wheel + sdist）
+   - Upload artifacts
+
+2. **Publish job**（tag 推送觸發）：
+   - Download artifacts
+   - `twine upload dist/*` 到 PyPI
+
+#### 步驟 6：驗證上傳成功
+
+1. GitHub Actions：https://github.com/kcf7012/pi-proj/actions
+2. PyPI 專案頁：https://pypi.org/project/learn2deck/
+
+### 8.3 手動觸發（測試或 hotfix 發佈）
+
+GitHub UI 手動執行 workflow（用 workflow_dispatch）：
+
+1. 前往 https://github.com/kcf7012/pi-proj/actions/workflows/publish.yml
+2. 點「Run workflow」
+3. Target: 選 `pypi` 或 `testpypi`
+4. 點「Run workflow」按鈕
+
+### 8.4 本機手動上傳（除錯用）
+
+如果 CI 壞了或要緊急修版本：
+
+```bash
+# 1. 確保 venv 有 build + twine
+/home/elan/pi-proj/.pptx-venv/bin/python -m pip install build twine
+
+# 2. 確認版本已更新
+grep '^version' pyproject.toml
+
+# 3. 清理舊產物並 build
+cd /home/elan/pi-proj/learn2deck
+rm -rf dist/ build/ learn2deck.egg-info/
+/home/elan/pi-proj/.pptx-venv/bin/python -m build
+
+# 4. 確認格式正確
+/home/elan/pi-proj/.pptx-venv/bin/python -m twine check dist/*
+
+# 5. 上傳
+export TWINE_USERNAME=__token__
+export TWINE_PASSWORD=pypi-你的token...
+/home/elan/pi-proj/.pptx-venv/bin/python -m twine upload dist/*
+
+# 6. 上傳到 TestPyPI（練皙用）
+/home/elan/pi-proj/.pptx-venv/bin/python -m twine upload --repository testpypi dist/*
+```
+
+### 8.5 版本號規範（Semantic Versioning）
+
+本專案遵循 [semver](https://semver.org/)：
+
+| 變動類型 | 版本變化 | 範例 |
+|:---------|:---------|:-----|
+| 不向後相容的變更 | MAJOR++ | 0.1.0 → 1.0.0 |
+| 新增功能（向後相容）| MINOR++ | 0.1.0 → 0.2.0 |
+| Bug 修正（向後相容）| PATCH++ | 0.1.0 → 0.1.1 |
+
+目前處於 0.x 階段（破壞性變更只要 MINOR++）：
+
+- v0.1.0：v1.0.0 純規則版
+- v0.2.0：v1.1.0 Skill 整合版（本版開發中）
+- v1.0.0：作為公開正式版（待評估）
+
+### 8.6 發佈前檢查清單
+
+- [ ] `pyproject.toml` 版本號已更新
+- [ ] 所有 243+ tests 本機通過
+- [ ] CHANGELOG / HANDOFF.md 有對應的 release notes
+- [ ] 所有改動已合併到 main
+- [ ] main 領先 origin/main 0 個 commit
+- [ ] `.github/workflows/publish.yml` 語法正確
+- [ ] GitHub Secret `PYPI_API_TOKEN` 已設定
+- [ ] （首次發佈）PyPI token scope 是「Entire account」
+
+### 8.7 緊急撤回已上傳版本
+
+PyPI 不允許刪除上傳的版本（保留安全性）。如果要撤回：
+
+```bash
+# 1. 上傳一個修正版本
+# 假設 v0.2.0 有問題，上傳 v0.2.1 修正
+
+# 2. 在 PyPI 專案頁標記為 yanked
+#    https://pypi.org/project/learn2deck/#history
+#    點 v0.2.0 → 「Yank release」
+#    填寫原因：「v0.2.1 has critical bug fix, see CHANGELOG」
+#    yanked 版本預設不裝設，但已裝的使用者會看到警告
+```
+
+### 8.8 常見問題
+
+#### Q: PyPI 上傳後多久生效？
+
+立刻。CI 上傳成功 → PyPI 套件頁 https://pypi.org/project/learn2deck/ 即可看到。
+`pip install learn2deck` 也能立刻裝到。
+
+#### Q: Tag 推送後 CI 沒跑？
+
+檢查：
+1. tag 格式是 `v*`（如 `v0.2.0`，不能是 `0.2.0`）
+2. GitHub Actions 是否啟用：https://github.com/kcf7012/pi-proj/actions
+3. workflow file 語法正確
+
+#### Q: 同個版本上傳第二次會怎樣？
+
+PyPI 拒絕（403 Forbidden）。必須 bump 版本號。
+
+#### Q: 怎麼測試整個發佈流程但不污染正式 PyPI？
+
+用 TestPyPI（https://test.pypi.org/）：
+1. 註冊 TestPyPI 帳號
+2. 設 GitHub Secret `PYPI_TEST_API_TOKEN`
+3. GitHub UI → Run workflow → 選 testpypi
+
+---
+
+## 8. 參考資源
 
 - HANDOFF.md — 接手者導引、開發計劃
 - README.md — 套件使用說明
@@ -378,3 +582,4 @@ git checkout -b feat/<name> <commit-sha>
 - docs/learn2deck-spec.md — 完整規格書
 - https://www.conventionalcommits.org/ — Conventional Commits 規範
 - https://docs.astral.sh/ruff/ — Ruff linter 文件
+- https://docs.pypi.org/trusted-publishers/ — PyPI Trusted Publishing（進階）

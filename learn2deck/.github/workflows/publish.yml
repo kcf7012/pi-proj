@@ -1,0 +1,121 @@
+name: Publish to PyPI
+
+# 觸發條件：當推送 v* tag 時自動 build + 上傳到 PyPI
+#
+# ============================================================
+# 設定步驟（首次）
+# ============================================================
+# 1. 在 PyPI 註冊帳號：https://pypi.org/account/register/
+# 2. 驗證 email
+# 3. 啟用 2FA（建議）
+# 4. 產生 API token：https://pypi.org/manage/account/token/
+#    - Token name: github-actions-learn2deck
+#    - Scope: "Entire account"（首次）或 "Project: learn2deck"（後續更新）
+#    - 複製 token（只顯示一次，格式：pypi-AgEIcHlwaS5vcmc...）
+# 5. 在 GitHub repo 加入 Secret：
+#    - Settings → Secrets and variables → Actions → New repository secret
+#    - Name: PYPI_API_TOKEN
+#    - Value: pypi-AgEIcHlwaS5vcmc...
+# 6. 建立並推送 tag：
+#    git tag v0.2.0
+#    git push origin v0.2.0
+# 7. CI 自動跑 build + 上傳
+#
+# ============================================================
+# 測試版本（先用 TestPyPI）
+# ============================================================
+# 1. 在 https://test.pypi.org/account/register/ 註冊 TestPyPI 帳號
+# 2. 產生 TestPyPI token（同上流程）
+# 3. GitHub Secret 名稱：PYPI_TEST_API_TOKEN
+# 4. workflow_dispatch → 選 testpypi → Run workflow
+
+'on':
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      target:
+        description: '上傳目標'
+        required: true
+        type: choice
+        options:
+          - pypi
+          - testpypi
+        default: testpypi
+
+jobs:
+  build:
+    name: Build distribution
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install build tools
+        run: python -m pip install --upgrade build
+
+      - name: Run tests
+        run: |
+          python -m pip install -e ".[dev]"
+          python -m pytest tests/ -v
+
+      - name: Build wheel + sdist
+        run: python -m build
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  publish-pypi:
+    name: Publish to PyPI (production)
+    needs: build
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/learn2deck
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Publish to PyPI via twine
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          python -m pip install twine
+          python -m twine upload dist/*
+
+  publish-testpypi:
+    name: Publish to TestPyPI (manual trigger)
+    needs: build
+    if: github.event_name == 'workflow_dispatch' && inputs.target == 'testpypi'
+    runs-on: ubuntu-latest
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/p/learn2deck
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Publish to TestPyPI via twine
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_TEST_API_TOKEN }}
+        run: |
+          python -m pip install twine
+          python -m twine upload --repository testpypi dist/*
