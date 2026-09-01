@@ -55,3 +55,6 @@ Thumbs.db
 _test.pptx
 *.bak.md
 learn2deck/.venv/
+
+# Playwright CLI 暫存檔(console log、snapshot yml、截圖等)
+.playwright-cli/
